@@ -8,6 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+
+import com.parse.LogInCallback;
+import com.parse.ParseException;
+import com.parse.ParseUser;
 
 /**
  * Created by Kristie_Syda on 2/4/16.
@@ -34,6 +39,10 @@ public class MainFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        //Username & Password
+        final EditText userName = (EditText) getView().findViewById(R.id.login_user);
+        final EditText password = (EditText) getView().findViewById(R.id.login_password);
+
         //Sign Up Button & Listener
         Button signUp = (Button) getView().findViewById(R.id.btn_signUp);
         signUp.setOnClickListener(new View.OnClickListener() {
@@ -46,5 +55,22 @@ public class MainFragment extends Fragment {
 
         //Login Button & Listener
         Button login = (Button) getView().findViewById(R.id.btn_login);
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseUser.logInInBackground(userName.getText().toString(), password.getText().toString(), new LogInCallback() {
+                    @Override
+                    public void done(ParseUser user, ParseException e) {
+                        if(user != null){
+                            System.out.println("//////////////// User Logged in");
+                            Intent hIntent = new Intent(getActivity(),HomeActivity.class);
+                            startActivity(hIntent);
+                        } else {
+                            System.out.println("///////////// error = " + e);
+                        }
+                    }
+                });
+            }
+        });
     }
 }

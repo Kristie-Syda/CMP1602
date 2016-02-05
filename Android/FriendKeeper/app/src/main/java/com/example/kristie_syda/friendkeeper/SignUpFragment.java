@@ -38,12 +38,14 @@ public class SignUpFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        //TextFields
         final EditText userName = (EditText) getView().findViewById(R.id.userName);
         final EditText email = (EditText) getView().findViewById(R.id.email);
         final EditText password = (EditText) getView().findViewById(R.id.password);
         final EditText firstName = (EditText) getView().findViewById(R.id.firstName);
         final EditText lastName = (EditText) getView().findViewById(R.id.lastName);
 
+        //Submit Button & Listener
         Button submit = (Button) getView().findViewById(R.id.btn_submit);
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +67,15 @@ public class SignUpFragment extends Fragment {
                         }
                     }
                 });
+            }
+        });
+
+        //Cancel Button & Listener
+        Button cancel = (Button) getView().findViewById(R.id.btn_cancel);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().finish();
             }
         });
     }

@@ -26,6 +26,10 @@
             android:label="Sign Up"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".HomeActivity"
+            android:label="Home">
+        </activity>
         <meta-data
             android:name="com.parse.APPLICATION_ID"
             android:value="XSvwBB0y1Tof3v7zTu0FvyMwTe8HtBg2lU8Ji7o2" />
