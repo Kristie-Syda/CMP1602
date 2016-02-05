@@ -18,6 +18,5 @@
         android:id="@+id/btn_login"
         android:layout_alignTop="@+id/btn_signUp"
         android:layout_alignStart="@+id/btn_signUp"
-        android:layout_marginTop="79dp"
-        android:layout_alignEnd="@+id/btn_signUp" />
+        android:layout_marginTop="79dp" />
 </RelativeLayout>

@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.parse.Parse;
+
 /**
  * Created by Kristie_Syda on 2/4/16.
  */
@@ -16,6 +18,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Init Parse
+        Parse.enableLocalDatastore(this);
+        Parse.initialize(this);
+
+        if(savedInstanceState == null){
+            //Load up Main Fragment
+            MainFragment frag = MainFragment.newInstance();
+            getFragmentManager().beginTransaction().replace(R.id.holder,frag,MainFragment.TAG).commit();
+        }
     }
 
     @Override
