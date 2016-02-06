@@ -1,9 +1,11 @@
 package com.example.kristie_syda.friendkeeper;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import com.parse.Parse;
+import com.parse.ParseUser;
 
 /**
  * Created by Kristie_Syda on 2/4/16.
@@ -20,15 +22,18 @@ public class MainActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-
-        //Init Parse
-        Parse.enableLocalDatastore(this);
-        Parse.initialize(this);
-
+        
         if(savedInstanceState == null){
-            //Load up Main Fragment
-            MainFragment frag = MainFragment.newInstance();
-            getFragmentManager().beginTransaction().replace(R.id.holder,frag,MainFragment.TAG).commit();
+            ParseUser currentUser = ParseUser.getCurrentUser();
+            if (currentUser != null) {
+                //start Home activity
+                Intent hIntent = new Intent(this,HomeActivity.class);
+                this.startActivity(hIntent);
+            } else {
+                //show login fragment
+                MainFragment frag = MainFragment.newInstance();
+                getFragmentManager().beginTransaction().replace(R.id.holder,frag,MainFragment.TAG).commit();
+            }
         }
     }
 }

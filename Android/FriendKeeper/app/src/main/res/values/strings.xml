@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">FriendKeeper</string>
     <string name="action_settings">Settings</string>
+    <string name="action_add">Add</string>
+    <string name="action_logOut">Log Out</string>
 </resources>
