@@ -1,4 +1,4 @@
-package com.example.kristie_syda.friendkeeper;
+package com.example.kristie_syda.friendkeeper.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,12 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.kristie_syda.friendkeeper.Fragments.ViewFragment;
+import com.example.kristie_syda.friendkeeper.R;
 import com.parse.ParseUser;
 
 /**
- * Created by Kristie_Syda on 2/5/16.
+ * Created by Kristie_Syda on 2/6/16.
  */
-public class HomeActivity extends AppCompatActivity {
+public class ViewActivity extends AppCompatActivity implements ViewFragment.viewListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,9 +25,9 @@ public class HomeActivity extends AppCompatActivity {
         bar.isShowing();
 
         if(savedInstanceState == null){
-            //Load up Main Fragment
-            HomeFragment frag = HomeFragment.newInstance();
-            getFragmentManager().beginTransaction().replace(R.id.holder,frag,HomeFragment.TAG).commit();
+            //Load up Add Fragment
+            ViewFragment frag = ViewFragment.newInstance();
+            getFragmentManager().beginTransaction().replace(R.id.holder,frag,ViewFragment.TAG).commit();
         }
     }
 
@@ -33,7 +35,7 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_add, menu);
         return true;
     }
     @Override
@@ -50,10 +52,15 @@ public class HomeActivity extends AppCompatActivity {
             main.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(main);
             return true;
-        } else if(id == R.id.action_add){
-            //start add activity
-            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //INTERFACE METHOD
+    @Override
+    public void deleteCompleted() {
+        Intent main = new Intent();
+        setResult(RESULT_OK, main);
+        finish();
     }
 }

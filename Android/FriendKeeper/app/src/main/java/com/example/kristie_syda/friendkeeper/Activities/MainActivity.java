@@ -1,10 +1,12 @@
-package com.example.kristie_syda.friendkeeper;
+package com.example.kristie_syda.friendkeeper.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import com.parse.Parse;
+
+import com.example.kristie_syda.friendkeeper.Fragments.MainFragment;
+import com.example.kristie_syda.friendkeeper.R;
 import com.parse.ParseUser;
 
 /**
@@ -22,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         if (actionBar != null) {
             actionBar.hide();
         }
-        
+
         if(savedInstanceState == null){
             ParseUser currentUser = ParseUser.getCurrentUser();
             if (currentUser != null) {

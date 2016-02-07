@@ -1,4 +1,4 @@
-package com.example.kristie_syda.friendkeeper;
+package com.example.kristie_syda.friendkeeper.Fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.kristie_syda.friendkeeper.R;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
