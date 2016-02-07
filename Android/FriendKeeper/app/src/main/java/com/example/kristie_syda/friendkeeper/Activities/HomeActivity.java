@@ -10,7 +10,14 @@ import android.view.MenuItem;
 import com.example.kristie_syda.friendkeeper.ContactObject;
 import com.example.kristie_syda.friendkeeper.Fragments.HomeFragment;
 import com.example.kristie_syda.friendkeeper.R;
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Kristie_Syda on 2/5/16.
@@ -18,6 +25,8 @@ import com.parse.ParseUser;
 public class HomeActivity extends AppCompatActivity implements HomeFragment.homeListener {
     private static final int ADD_RESULTS = 1;
     private static final int DELETE_RESULTS = 2;
+    private ArrayList<ContactObject> mList;
+    private ParseUser mUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +35,8 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.home
         //show action bar
         ActionBar bar = getSupportActionBar();
         bar.isShowing();
-
+        //Get Parse User
+        mUser = ParseUser.getCurrentUser();
         if(savedInstanceState == null){
             //Load up Home Fragment
             HomeFragment frag = HomeFragment.newInstance();
@@ -71,17 +81,49 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.home
         if(requestCode == ADD_RESULTS && resultCode == RESULT_OK){
             HomeFragment frag = (HomeFragment) getFragmentManager().findFragmentByTag(HomeFragment.TAG);
             frag.refreshList();
-        } else if(requestCode == ADD_RESULTS && resultCode == RESULT_OK) {
+        } else if(requestCode == DELETE_RESULTS && resultCode == RESULT_OK) {
             HomeFragment frag = (HomeFragment) getFragmentManager().findFragmentByTag(HomeFragment.TAG);
             frag.refreshList();
         }
     }
 
+    //MAKE ARRAY FROM PARSE DATA
+    public ArrayList<ContactObject> makeArray(){
+        mList = new ArrayList<>();
+        //Get user data from parse
+        ParseQuery<ParseObject> contactQuery = ParseQuery.getQuery("Contacts");
+        contactQuery.whereEqualTo("User", mUser);
+        contactQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    //loop through objects
+                    for (ParseObject contact : objects) {
+                        String last = contact.getString("LastName").toString();
+                        String first = contact.get("FirstName").toString();
+                        String objId = contact.getObjectId();
+                        int phone = contact.getInt("Phone");
+                        ContactObject obj = new ContactObject(first, last, phone,objId);
+                        mList.add(obj);
+                    }
+                } else {
+                    System.out.println("////// list error = " + e);
+                }
+            }
+        });
+        return mList;
+    }
+
     //INTERFACE
     @Override
-    public void viewItem(ContactObject obj, int Pos) {
+    public void viewItem(ContactObject obj) {
         //Start View Activity
         Intent vIntent = new Intent(this,ViewActivity.class);
+        vIntent.putExtra(ViewActivity.EXTRA_CONTACT,obj);
         this.startActivityForResult(vIntent, DELETE_RESULTS);
+    }
+    @Override
+    public ArrayList<ContactObject> getArray() {
+        return makeArray();
     }
 }
