@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.example.kristie_syda.friendkeeper.ContactObject;
 import com.example.kristie_syda.friendkeeper.Fragments.ViewFragment;
 import com.example.kristie_syda.friendkeeper.R;
 import com.parse.ParseUser;
@@ -16,8 +15,6 @@ import com.parse.ParseUser;
  * Created by Kristie_Syda on 2/6/16.
  */
 public class ViewActivity extends AppCompatActivity implements ViewFragment.viewListener {
-    public static final String EXTRA_CONTACT = "com.fullsail.android.EXTRA_CONTACT";
-    private ContactObject mObject;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,9 +29,6 @@ public class ViewActivity extends AppCompatActivity implements ViewFragment.view
             ViewFragment frag = ViewFragment.newInstance();
             getFragmentManager().beginTransaction().replace(R.id.holder,frag,ViewFragment.TAG).commit();
         }
-        //get intent extras
-        Intent intent = getIntent();
-        mObject = (ContactObject) intent.getSerializableExtra(EXTRA_CONTACT);
     }
 
     //ACTION BAR
@@ -56,7 +50,6 @@ public class ViewActivity extends AppCompatActivity implements ViewFragment.view
             Intent main = new Intent(this, MainActivity.class);
             main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             main.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            main.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(main);
             return true;
         }
@@ -66,13 +59,8 @@ public class ViewActivity extends AppCompatActivity implements ViewFragment.view
     //INTERFACE METHOD
     @Override
     public void deleteCompleted() {
-        Intent home = new Intent();
-        setResult(RESULT_OK,home);
+        Intent main = new Intent();
+        setResult(RESULT_OK, main);
         finish();
-    }
-
-    @Override
-    public ContactObject getObject() {
-        return mObject;
     }
 }

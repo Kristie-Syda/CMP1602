@@ -50,7 +50,6 @@ public class AddActivity extends AppCompatActivity implements AddFragment.addLis
             Intent main = new Intent(this, MainActivity.class);
             main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             main.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            main.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(main);
             return true;
         }

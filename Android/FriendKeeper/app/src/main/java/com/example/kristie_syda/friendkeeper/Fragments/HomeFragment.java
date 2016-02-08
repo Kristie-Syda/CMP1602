@@ -1,7 +1,7 @@
 package com.example.kristie_syda.friendkeeper.Fragments;
 
 import android.app.Activity;
-import android.app.ListFragment;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -14,17 +14,21 @@ import android.widget.TextView;
 
 import com.example.kristie_syda.friendkeeper.ContactObject;
 import com.example.kristie_syda.friendkeeper.R;
-
+import com.parse.FindCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-
+import java.util.List;
 
 
 /**
  * Created by Kristie_Syda on 2/4/16.
  */
-public class HomeFragment extends ListFragment {
+public class HomeFragment extends Fragment {
     public static final String TAG = "HomeFragment.TAG";
     private ParseUser mUser;
     private ArrayAdapter mAdapter;
@@ -48,8 +52,7 @@ public class HomeFragment extends ListFragment {
 
     //INTERFACE
     public interface homeListener{
-        void viewItem(ContactObject obj);
-        ArrayList<ContactObject> getArray();
+        void viewItem(ContactObject obj, int Pos);
     }
 
     @Override
@@ -74,22 +77,44 @@ public class HomeFragment extends ListFragment {
         name.setText("Welcome " + mUser.getUsername());
 
         //ListView
-        ListView list = (ListView) getView().findViewById(android.R.id.list);
-        mAdapter = new ArrayAdapter<ContactObject>(getActivity(),android.R.layout.simple_list_item_1,mListener.getArray());
+        ListView list = (ListView) getView().findViewById(R.id.listView);
+        list.setEmptyView(getView().findViewById(R.id.empty));
+        mAdapter = new ArrayAdapter(getActivity(),android.R.layout.simple_list_item_1);
         list.setAdapter(mAdapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ContactObject object = (ContactObject) parent.getAdapter().getItem(position);
-                mListener.viewItem(object);
+                mListener.viewItem(object,position);
             }
         });
+
+        refreshList();
     }
 
     //REFRESH LIST
     public void refreshList(){
-       // mAdapter.clear();
-        mAdapter.addAll(mListener.getArray());
+        mAdapter.clear();
+        //Get user data from parse
+        ParseQuery<ParseObject> contactQuery = ParseQuery.getQuery("Contacts");
+        contactQuery.whereEqualTo("User", mUser);
+        contactQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (e == null) {
+                    //loop through objects
+                    for (ParseObject contact : objects) {
+                        String last = contact.getString("LastName").toString();
+                        String first = contact.get("FirstName").toString();
+                        int phone = contact.getInt("Phone");
+                        ContactObject obj = new ContactObject(first, last, phone);
+                        mAdapter.add(obj);
+                    }
+                } else {
+                    System.out.println("////// list error = " + e);
+                }
+            }
+        });
     }
 
 }
