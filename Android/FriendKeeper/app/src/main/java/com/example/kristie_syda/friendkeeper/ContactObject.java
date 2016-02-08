@@ -1,11 +1,14 @@
 package com.example.kristie_syda.friendkeeper;
 
+import java.io.Serializable;
+
 /**
  * Created by Kristie_Syda on 2/7/16.
  */
-public class ContactObject {
+public class ContactObject implements Serializable {
     private String mFirst;
     private String mLast;
+    private String mObjectId;
     private int mPhone;
 
     //Getters
@@ -21,10 +24,14 @@ public class ContactObject {
     public String toString(){
         return mLast + ", " + mFirst;
     }
+    public String getmObjectId() {
+        return mObjectId;
+    }
 
-    public ContactObject(String first, String last, int phone){
+    public ContactObject(String first, String last, int phone, String id){
         mFirst = first;
         mLast = last;
         mPhone = phone;
+        mObjectId = id;
     }
 }

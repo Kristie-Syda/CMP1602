@@ -71,7 +71,7 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.home
         if(requestCode == ADD_RESULTS && resultCode == RESULT_OK){
             HomeFragment frag = (HomeFragment) getFragmentManager().findFragmentByTag(HomeFragment.TAG);
             frag.refreshList();
-        } else if(requestCode == ADD_RESULTS && resultCode == RESULT_OK) {
+        } else if(requestCode == DELETE_RESULTS && resultCode == RESULT_OK) {
             HomeFragment frag = (HomeFragment) getFragmentManager().findFragmentByTag(HomeFragment.TAG);
             frag.refreshList();
         }
@@ -79,9 +79,10 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.home
 
     //INTERFACE
     @Override
-    public void viewItem(ContactObject obj, int Pos) {
+    public void viewItem(ContactObject obj) {
         //Start View Activity
         Intent vIntent = new Intent(this,ViewActivity.class);
+        vIntent.putExtra(ViewActivity.EXTRA_CONTACT,obj);
         this.startActivityForResult(vIntent, DELETE_RESULTS);
     }
 }

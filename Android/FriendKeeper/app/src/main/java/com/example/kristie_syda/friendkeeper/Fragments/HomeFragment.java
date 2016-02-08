@@ -20,8 +20,6 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -52,7 +50,7 @@ public class HomeFragment extends Fragment {
 
     //INTERFACE
     public interface homeListener{
-        void viewItem(ContactObject obj, int Pos);
+        void viewItem(ContactObject obj);
     }
 
     @Override
@@ -85,10 +83,9 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ContactObject object = (ContactObject) parent.getAdapter().getItem(position);
-                mListener.viewItem(object,position);
+                mListener.viewItem(object);
             }
         });
-
         refreshList();
     }
 
@@ -107,7 +104,8 @@ public class HomeFragment extends Fragment {
                         String last = contact.getString("LastName").toString();
                         String first = contact.get("FirstName").toString();
                         int phone = contact.getInt("Phone");
-                        ContactObject obj = new ContactObject(first, last, phone);
+                        String objId = contact.getObjectId();
+                        ContactObject obj = new ContactObject(first, last, phone, objId);
                         mAdapter.add(obj);
                     }
                 } else {
