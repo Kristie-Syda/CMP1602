@@ -1,6 +1,7 @@
 package com.example.kristie_syda.friendkeeper.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.R;
 import com.parse.ParseException;
@@ -75,25 +77,39 @@ public class AddFragment extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Get Parse User
-                ParseUser currentUser = ParseUser.getCurrentUser();
-                ParseObject contact = new ParseObject("Contacts");
-                contact.put("User", currentUser);
-                contact.put("FirstName",first.getText().toString());
-                contact.put("LastName",last.getText().toString());
-                contact.put("Phone", Integer.parseInt(phone.getText().toString()));
-                contact.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            //contact saved
-                            mListener.saveCompleted();
-                        } else {
-                            System.out.println("something went wrong " + e);
-                        }
-                    }
-                });
 
+                if((first.getText().toString().length() == 0)|(last.getText().toString().length() == 0)|(phone.getText().toString().length() == 0)){
+                    //Alert box
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Alert");
+                    alert.setMessage("please leave no fields blank");
+                    alert.setPositiveButton("OKAY", null);
+                    alert.show();
+                } else {
+                    //Get Parse User
+                    ParseUser currentUser = ParseUser.getCurrentUser();
+                    ParseObject contact = new ParseObject("Contacts");
+                    contact.put("User", currentUser);
+                    contact.put("FirstName",first.getText().toString());
+                    contact.put("LastName",last.getText().toString());
+                    contact.put("Phone", Integer.parseInt(phone.getText().toString()));
+                    contact.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                //contact saved
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was saved!", duration);
+                                toast.show();
+                                mListener.saveCompleted();
+                            } else {
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
+                                toast.show();
+                            }
+                        }
+                    });
+                }
             }
         });
 

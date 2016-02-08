@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.ContactObject;
 import com.example.kristie_syda.friendkeeper.R;
@@ -89,9 +90,14 @@ public class ViewFragment extends Fragment {
                     public void done(ParseObject object, com.parse.ParseException e) {
                         if(e == null){
                             object.deleteInBackground();
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was deleted!", duration);
+                            toast.show();
                             mListener.deleteCompleted();
                         } else {
-                            System.out.println("something went wrong when deleteing " + e);
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
+                            toast.show();
                         }
                     }
                 });

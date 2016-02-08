@@ -1,6 +1,7 @@
 package com.example.kristie_syda.friendkeeper.Fragments;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -8,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.kristie_syda.friendkeeper.Activities.HomeActivity;
 import com.example.kristie_syda.friendkeeper.R;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -62,9 +65,16 @@ public class SignUpFragment extends Fragment {
                     @Override
                     public void done(ParseException e) {
                         if(e == null){
-                            System.out.println("//////////////////// User Created");
+                            //User was created -- take to home screen
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "User was created!", duration);
+                            toast.show();
+                            Intent hIntent = new Intent(getActivity(),HomeActivity.class);
+                            startActivity(hIntent);
                         } else {
-                            System.out.println("//////////////////// Something went wrong");
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: username, email & password are required fields ", duration);
+                            toast.show();
                         }
                     }
                 });

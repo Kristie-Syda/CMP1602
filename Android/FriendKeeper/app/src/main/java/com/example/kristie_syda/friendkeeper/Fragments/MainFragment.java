@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.Activities.HomeActivity;
 import com.example.kristie_syda.friendkeeper.Activities.SignUpActivity;
@@ -65,11 +66,15 @@ public class MainFragment extends Fragment {
                     @Override
                     public void done(ParseUser user, ParseException e) {
                         if(user != null){
-                            System.out.println("//////////////// User Logged in");
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "User Logged in", duration);
+                            toast.show();
                             Intent hIntent = new Intent(getActivity(),HomeActivity.class);
                             startActivity(hIntent);
                         } else {
-                            System.out.println("///////////// error = " + e);
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Incorrect Username or Password. Try again", duration);
+                            toast.show();
                         }
                     }
                 });

@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.Fragments.AddFragment;
 import com.example.kristie_syda.friendkeeper.R;
@@ -44,6 +45,9 @@ public class AddActivity extends AppCompatActivity implements AddFragment.addLis
 
         if (id == R.id.action_settings) {
             //Log out
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(this, "User logged out!", duration);
+            toast.show();
             ParseUser.logOut();
             ParseUser current = ParseUser.getCurrentUser();
             //restart main activity

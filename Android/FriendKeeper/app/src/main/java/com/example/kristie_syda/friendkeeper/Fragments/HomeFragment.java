@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.ContactObject;
 import com.example.kristie_syda.friendkeeper.R;
@@ -109,7 +110,9 @@ public class HomeFragment extends Fragment {
                         mAdapter.add(obj);
                     }
                 } else {
-                    System.out.println("////// list error = " + e);
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
+                    toast.show();
                 }
             }
         });
