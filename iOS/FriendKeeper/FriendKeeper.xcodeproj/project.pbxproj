@@ -31,6 +31,7 @@
 		C40C234F1C69B726004C2DE4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C40C234E1C69B726004C2DE4 /* libz.tbd */; };
 		C40C23511C69B73A004C2DE4 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C40C23501C69B73A004C2DE4 /* libsqlite3.tbd */; };
 		C40C23541C69D525004C2DE4 /* AddViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C40C23531C69D525004C2DE4 /* AddViewController.m */; };
+		C40C23571C6A0045004C2DE4 /* ContactObject.m in Sources */ = {isa = PBXBuildFile; fileRef = C40C23561C6A0045004C2DE4 /* ContactObject.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,8 @@
 		C40C23501C69B73A004C2DE4 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		C40C23521C69D525004C2DE4 /* AddViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddViewController.h; sourceTree = "<group>"; };
 		C40C23531C69D525004C2DE4 /* AddViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddViewController.m; sourceTree = "<group>"; };
+		C40C23551C6A0045004C2DE4 /* ContactObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactObject.h; sourceTree = "<group>"; };
+		C40C23561C6A0045004C2DE4 /* ContactObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactObject.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +179,8 @@
 				C40C23381C698C20004C2DE4 /* HomeViewController.m */,
 				C40C23521C69D525004C2DE4 /* AddViewController.h */,
 				C40C23531C69D525004C2DE4 /* AddViewController.m */,
+				C40C23551C6A0045004C2DE4 /* ContactObject.h */,
+				C40C23561C6A0045004C2DE4 /* ContactObject.m */,
 			);
 			path = FriendKeeper;
 			sourceTree = "<group>";
@@ -337,6 +342,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C40C23571C6A0045004C2DE4 /* ContactObject.m in Sources */,
 				C40C23041C697708004C2DE4 /* ViewController.m in Sources */,
 				C40C23011C697708004C2DE4 /* AppDelegate.m in Sources */,
 				C40C23541C69D525004C2DE4 /* AddViewController.m in Sources */,

@@ -13,6 +13,7 @@
 {
     IBOutlet UILabel *welcome;
     IBOutlet UITableView *myTable;
+    NSMutableArray *contacts;
 }
 
 -(IBAction)logOut;

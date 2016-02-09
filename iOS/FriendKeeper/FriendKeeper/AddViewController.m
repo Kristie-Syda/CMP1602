@@ -7,6 +7,7 @@
 //
 
 #import "AddViewController.h"
+#import "HomeViewController.h"
 
 @interface AddViewController ()
 
@@ -24,16 +25,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
-
 //Save Button
 -(IBAction)OnSave{
     if((first.text.length != 0)|(last.text.length != 0)|(number.text.length != 0)){
@@ -50,7 +41,15 @@
         contact[@"User"] = [PFUser currentUser];
         [contact saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
             if (succeeded) {
-                NSLog(@"object saved");
+                //Load Home Screen
+                UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                                     bundle:nil];
+                HomeViewController *home =
+                [storyboard instantiateViewControllerWithIdentifier:@"home"];
+                
+                [self presentViewController:home
+                                   animated:YES
+                                 completion:nil];
             } else {
                  NSLog(@"object didnt saved");
             }
