@@ -91,24 +91,34 @@ public class AddFragment extends Fragment {
                     ParseObject contact = new ParseObject("Contacts");
                     contact.put("User", currentUser);
                     contact.put("FirstName",first.getText().toString());
-                    contact.put("LastName",last.getText().toString());
-                    contact.put("Phone", Integer.parseInt(phone.getText().toString()));
-                    contact.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                //contact saved
-                                int duration = Toast.LENGTH_SHORT;
-                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was saved!", duration);
-                                toast.show();
-                                mListener.saveCompleted();
-                            } else {
-                                int duration = Toast.LENGTH_SHORT;
-                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
-                                toast.show();
+                    contact.put("LastName", last.getText().toString());
+                    try {
+                        contact.put("Phone", Integer.parseInt(phone.getText().toString()));
+                        contact.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    //contact saved
+                                    int duration = Toast.LENGTH_SHORT;
+                                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was saved!", duration);
+                                    toast.show();
+                                    mListener.saveCompleted();
+                                } else {
+                                    int duration = Toast.LENGTH_SHORT;
+                                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
+                                    toast.show();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }catch (NumberFormatException e) {
+                        //Alert box
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                        alert.setTitle("Alert");
+                        alert.setMessage("phone number is incorrect");
+                        alert.setPositiveButton("OKAY", null);
+                        alert.show();
+                        e.printStackTrace();
+                    }
                 }
             }
         });
