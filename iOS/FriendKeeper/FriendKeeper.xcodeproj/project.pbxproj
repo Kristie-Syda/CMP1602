@@ -32,6 +32,7 @@
 		C40C23511C69B73A004C2DE4 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = C40C23501C69B73A004C2DE4 /* libsqlite3.tbd */; };
 		C40C23541C69D525004C2DE4 /* AddViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C40C23531C69D525004C2DE4 /* AddViewController.m */; };
 		C40C23571C6A0045004C2DE4 /* ContactObject.m in Sources */ = {isa = PBXBuildFile; fileRef = C40C23561C6A0045004C2DE4 /* ContactObject.m */; };
+		C40C235A1C6A0D32004C2DE4 /* DetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C40C23591C6A0D32004C2DE4 /* DetailViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,8 @@
 		C40C23531C69D525004C2DE4 /* AddViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddViewController.m; sourceTree = "<group>"; };
 		C40C23551C6A0045004C2DE4 /* ContactObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContactObject.h; sourceTree = "<group>"; };
 		C40C23561C6A0045004C2DE4 /* ContactObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContactObject.m; sourceTree = "<group>"; };
+		C40C23581C6A0D32004C2DE4 /* DetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DetailViewController.h; sourceTree = "<group>"; };
+		C40C23591C6A0D32004C2DE4 /* DetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DetailViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +184,8 @@
 				C40C23531C69D525004C2DE4 /* AddViewController.m */,
 				C40C23551C6A0045004C2DE4 /* ContactObject.h */,
 				C40C23561C6A0045004C2DE4 /* ContactObject.m */,
+				C40C23581C6A0D32004C2DE4 /* DetailViewController.h */,
+				C40C23591C6A0D32004C2DE4 /* DetailViewController.m */,
 			);
 			path = FriendKeeper;
 			sourceTree = "<group>";
@@ -345,6 +350,7 @@
 				C40C23571C6A0045004C2DE4 /* ContactObject.m in Sources */,
 				C40C23041C697708004C2DE4 /* ViewController.m in Sources */,
 				C40C23011C697708004C2DE4 /* AppDelegate.m in Sources */,
+				C40C235A1C6A0D32004C2DE4 /* DetailViewController.m in Sources */,
 				C40C23541C69D525004C2DE4 /* AddViewController.m in Sources */,
 				C40C23331C6985F1004C2DE4 /* SignUpViewController.m in Sources */,
 				C40C23391C698C20004C2DE4 /* HomeViewController.m in Sources */,

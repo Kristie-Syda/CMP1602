@@ -9,5 +9,5 @@
 #import "ContactObject.h"
 
 @implementation ContactObject
-@synthesize first,last,phone;
+@synthesize first,last,phone,objectId;
 @end

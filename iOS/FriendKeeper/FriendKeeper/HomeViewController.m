@@ -9,6 +9,7 @@
 #import "HomeViewController.h"
 #import "AddViewController.h"
 #import "ViewController.h"
+#import "DetailViewController.h"
 #import "ContactObject.h"
 
 @interface HomeViewController ()
@@ -26,7 +27,7 @@
     //Get current user info
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser) {
-        welcome.text = currentUser.username;
+        welcome.text = [NSString stringWithFormat:@"Welcome %@", currentUser.username];
     } else {
         welcome.text = @"Welcome!";
     }
@@ -46,6 +47,7 @@
                 contact.first = object[@"FirstName"];
                 contact.last = object[@"LastName"];
                 contact.phone = object[@"Phone"];
+                contact.objectId = object;
                 
                 //Add objects to array
                 [contacts addObject:contact];
@@ -111,6 +113,19 @@
         cell.detailTextLabel.text = number;
     }
     return cell;
+}
+
+//Segue
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    DetailViewController *detailView = segue.destinationViewController;
+    if (detailView != nil) {
+        UITableViewCell *cell = (UITableViewCell*)sender;
+        NSIndexPath *indexPath = [myTable indexPathForCell:cell];
+        
+        //pass object to the detail view controller
+        ContactObject *current = [contacts objectAtIndex:indexPath.row];
+        detailView.current = current;
+    }
 }
 
 @end

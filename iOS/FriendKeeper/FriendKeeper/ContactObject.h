@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <Parse/Parse.h>
 
 @interface ContactObject : NSObject
 @property(nonatomic,strong)NSString *first;
 @property(nonatomic,strong)NSString *last;
+@property(nonatomic,strong)PFObject *objectId;
 @property(nonatomic,strong)NSNumber *phone;
 @end
