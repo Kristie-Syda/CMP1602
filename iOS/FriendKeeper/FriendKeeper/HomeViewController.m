@@ -7,6 +7,8 @@
 //
 
 #import "HomeViewController.h"
+#import "AddViewController.h"
+#import "ViewController.h"
 
 @interface HomeViewController ()
 
@@ -16,7 +18,14 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    
+    //Get current user info
+    PFUser *currentUser = [PFUser currentUser];
+    if (currentUser) {
+        welcome.text = currentUser.username;
+    } else {
+        welcome.text = @"Welcome!";
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -24,14 +33,43 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+//Log Out Button
+-(IBAction)logOut{
+    //Log user out of parse
+    [PFUser logOut];
+    PFUser *currentUser = [PFUser currentUser];
+    NSLog(@"currentUser == %@",currentUser);
+    
+    //Go back to login screen
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                         bundle:nil];
+    ViewController *view =
+    [storyboard instantiateViewControllerWithIdentifier:@"main"];
+    
+    [self presentViewController:view
+                       animated:YES
+                     completion:nil];
 }
-*/
+
+//Add Contact Button
+-(IBAction)add{
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                         bundle:nil];
+    AddViewController *add =
+    [storyboard instantiateViewControllerWithIdentifier:@"add"];
+    
+    [self presentViewController:add
+                       animated:YES
+                     completion:nil];
+
+}
+
+//TableView Required Methods
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 0;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    return nil;
+}
 
 @end

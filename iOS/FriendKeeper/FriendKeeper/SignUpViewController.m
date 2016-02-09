@@ -50,5 +50,7 @@
 -(IBAction)onSubmit{
     [self signUp];
 }
-
+-(IBAction)onCancel{
+    [self dismissViewControllerAnimated:true completion:nil];
+}
 @end

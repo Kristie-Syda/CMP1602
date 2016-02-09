@@ -19,4 +19,5 @@
 }
 
 -(IBAction)onSubmit;
+-(IBAction)onCancel;
 @end

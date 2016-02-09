@@ -7,7 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <Parse/Parse.h>
 
-@interface HomeViewController : UIViewController
+@interface HomeViewController : UIViewController <UITableViewDataSource,UITableViewDelegate>
+{
+    IBOutlet UILabel *welcome;
+    IBOutlet UITableView *myTable;
+}
 
+-(IBAction)logOut;
+-(IBAction)add;
 @end
