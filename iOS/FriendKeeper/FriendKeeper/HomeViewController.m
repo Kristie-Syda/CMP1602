@@ -18,6 +18,8 @@
 
 @implementation HomeViewController
 
+#pragma mark -
+#pragma mark Managing Views
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -58,46 +60,35 @@
         }
     }];
 }
-
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
-
-//Log Out Button
--(IBAction)logOut{
-    //Log user out of parse
-    [PFUser logOut];
-    PFUser *currentUser = [PFUser currentUser];
-    NSLog(@"currentUser == %@",currentUser);
-    
-    //Go back to login screen
-    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
-                                                         bundle:nil];
-    ViewController *view =
-    [storyboard instantiateViewControllerWithIdentifier:@"main"];
-    
-    [self presentViewController:view
-                       animated:YES
-                     completion:nil];
+//toast alert message
+-(void)toastMessage {
+    NSString *message = @"User Logged Out";
+    UIAlertView *toast = [[UIAlertView alloc] initWithTitle:nil
+                                                    message:message
+                                                   delegate:nil
+                                          cancelButtonTitle:nil
+                                          otherButtonTitles:nil, nil];
+    toast.backgroundColor=[UIColor redColor];
+    [toast show];
+    int duration = 2; // duration in seconds
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration
+                                 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        [toast dismissWithClickedButtonIndex:0 animated:YES];
+    });
 }
 
-//Add Contact Button
--(IBAction)add{
-    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
-                                                         bundle:nil];
-    AddViewController *add =
-    [storyboard instantiateViewControllerWithIdentifier:@"add"];
-    
-    [self presentViewController:add
-                       animated:YES
-                     completion:nil];
-}
+#pragma mark -
+#pragma mark Table Management
 
-//TableView Required Methods
+//TableView row count
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [contacts count];
 }
+//TableView cells
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     UITableViewCell *cell = [myTable dequeueReusableCellWithIdentifier:@"myCell"];
@@ -115,6 +106,39 @@
     return cell;
 }
 
+#pragma mark -
+#pragma mark Navigation
+
+//Log Out Button
+-(IBAction)logOut{
+    //send alert
+    [self toastMessage];
+    //Log user out of parse
+    [PFUser logOut];
+    PFUser *currentUser = [PFUser currentUser];
+    NSLog(@"currentUser == %@",currentUser);
+    
+    //Go back to login screen
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                         bundle:nil];
+    ViewController *view =
+    [storyboard instantiateViewControllerWithIdentifier:@"main"];
+    
+    [self presentViewController:view
+                       animated:YES
+                     completion:nil];
+}
+//Add Contact Button
+-(IBAction)add{
+    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                         bundle:nil];
+    AddViewController *add =
+    [storyboard instantiateViewControllerWithIdentifier:@"add"];
+    
+    [self presentViewController:add
+                       animated:YES
+                     completion:nil];
+}
 //Segue
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     DetailViewController *detailView = segue.destinationViewController;
