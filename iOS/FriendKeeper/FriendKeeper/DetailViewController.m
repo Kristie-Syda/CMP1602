@@ -41,9 +41,8 @@
                                                    delegate:nil
                                           cancelButtonTitle:nil
                                           otherButtonTitles:nil, nil];
-    toast.backgroundColor=[UIColor redColor];
     [toast show];
-    int duration = 2; // duration in seconds
+    int duration = 1.5;
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration
                                  * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
         [toast dismissWithClickedButtonIndex:0 animated:YES];
