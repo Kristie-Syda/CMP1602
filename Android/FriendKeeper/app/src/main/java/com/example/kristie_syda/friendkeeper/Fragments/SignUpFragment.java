@@ -64,20 +64,28 @@ public class SignUpFragment extends Fragment {
                 user.signUpInBackground(new SignUpCallback() {
                     @Override
                     public void done(ParseException e) {
-                        if(e == null){
-                            //User was created -- take to home screen
-                            int duration = Toast.LENGTH_SHORT;
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "User was created!", duration);
-                            toast.show();
-                            Intent hIntent = new Intent(getActivity(),HomeActivity.class);
-                            startActivity(hIntent);
-                        } else {
+                        if ((userName.getText().toString().length() == 0)||(email.getText().toString().length() == 0)||(password.getText().toString().length() == 0)) {
+                            //required fields were blank
                             int duration = Toast.LENGTH_SHORT;
                             Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: username, email & password are required fields ", duration);
                             toast.show();
+                        } else {
+                            if (e == null) {
+                                //User was created -- take to home screen
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "User was created!", duration);
+                                toast.show();
+                                Intent hIntent = new Intent(getActivity(), HomeActivity.class);
+                                startActivity(hIntent);
+                            } else {
+                                //error when user was created
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), duration);
+                                toast.show();
+                            }
                         }
-                    }
-                });
+                }
+            });
             }
         });
 
