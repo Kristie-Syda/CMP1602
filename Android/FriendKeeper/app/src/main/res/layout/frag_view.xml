@@ -14,20 +14,20 @@
         android:layout_marginLeft="10dp"
         android:background="#383535">
 
-        <TextView
+        <EditText
             android:layout_width="200dp"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:id="@+id/view_first"
             android:paddingLeft="20dp"
             android:textColor="#fff"
             android:textSize="20dp"
-            android:layout_marginTop="59dp"
+            android:layout_marginTop="52dp"
             android:layout_below="@+id/textView2"
-            android:layout_toEndOf="@+id/textView3" />
+            android:layout_alignStart="@+id/view_last" />
 
-        <TextView
+        <EditText
             android:layout_width="200dp"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:id="@+id/view_last"
             android:paddingLeft="20dp"
             android:textColor="#fff"
@@ -36,9 +36,9 @@
             android:layout_below="@+id/view_first"
             android:layout_toEndOf="@+id/textView3" />
 
-        <TextView
+        <EditText
             android:layout_width="200dp"
-            android:layout_height="30dp"
+            android:layout_height="50dp"
             android:id="@+id/view_phone"
             android:paddingLeft="20dp"
             android:textColor="#fff"
@@ -90,7 +90,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="First Name:"
-            android:textColor="#be1818"
+            android:textColor="#ffffff"
             android:id="@+id/textView3"
             android:textSize="18dp"
             android:layout_alignTop="@+id/view_first"
@@ -100,17 +100,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Last Name:"
-            android:textColor="#c61a1a"
+            android:textColor="#ffffff"
             android:id="@+id/textView4"
             android:textSize="18dp"
-            android:layout_alignTop="@+id/view_last"
-            android:layout_toStartOf="@+id/view_last" />
+            android:layout_centerVertical="true"
+            android:layout_alignStart="@+id/textView3" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Number:"
-            android:textColor="#bc1414"
+            android:textColor="#ffffff"
             android:id="@+id/textView5"
             android:textSize="18dp"
             android:layout_alignTop="@+id/view_phone"

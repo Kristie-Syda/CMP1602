@@ -5,10 +5,13 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,12 +21,16 @@ import com.example.kristie_syda.friendkeeper.R;
 import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import java.text.ParseException;
 
 
 /**
  * Created by Kristie_Syda on 2/4/16.
  */
-public class ViewFragment extends Fragment {
+public class ViewFragment extends Fragment implements TextWatcher {
     public static final String TAG = "ViewFragment.TAG";
     private viewListener mListener;
 
@@ -40,6 +47,19 @@ public class ViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_view,container,false);
         return view;
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+    }
+    @Override
+    public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+    }
+    @Override
+    public void afterTextChanged(Editable s) {
+
     }
 
     //INTERFACE
@@ -63,13 +83,13 @@ public class ViewFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         //Set TextFields
-        TextView first = (TextView) getView().findViewById(R.id.view_first);
+        final EditText first = (EditText) getView().findViewById(R.id.view_first);
         first.setText(mListener.getObject().getmFirst());
 
-        TextView last = (TextView) getView().findViewById(R.id.view_last);
+        final EditText last = (EditText) getView().findViewById(R.id.view_last);
         last.setText(mListener.getObject().getmLast());
 
-        TextView phone = (TextView) getView().findViewById(R.id.view_phone);
+        final EditText phone = (EditText) getView().findViewById(R.id.view_phone);
         phone.setText(Integer.toString(mListener.getObject().getmPhone()));
 
         //Okay Button
@@ -77,7 +97,39 @@ public class ViewFragment extends Fragment {
         okay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.deleteCompleted();
+                //check fields
+                if ((first.getText().toString().length() == 0) | (last.getText().toString().length() == 0) | (phone.getText().toString().length() == 0)) {
+                    //Alert box
+                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                    alert.setTitle("Alert");
+                    alert.setMessage("please leave no fields blank");
+                    alert.setPositiveButton("OKAY", null);
+                    alert.show();
+                } else {
+                    // Update info in parse
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Contacts");
+                    query.getInBackground(mListener.getObject().getmObjectId(), new GetCallback<ParseObject>() {
+                        public void done(ParseObject contact, com.parse.ParseException e) {
+                            if (e == null) {
+                                contact.put("FirstName", first.getText().toString());
+                                contact.put("LastName", last.getText().toString());
+                                try {
+                                    contact.put("Phone", Integer.parseInt(phone.getText().toString()));
+                                } catch (NumberFormatException er) {
+                                    //Alert box
+                                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                                    alert.setTitle("Alert");
+                                    alert.setMessage("phone number is incorrect");
+                                    alert.setPositiveButton("OKAY", null);
+                                    alert.show();
+                                    er.printStackTrace();
+                                }
+                                contact.saveInBackground();
+                            }
+                        }
+                    });
+                    mListener.deleteCompleted();
+                }
             }
         });
 
