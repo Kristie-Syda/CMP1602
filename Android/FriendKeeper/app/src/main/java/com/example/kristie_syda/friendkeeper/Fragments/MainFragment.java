@@ -1,5 +1,6 @@
 package com.example.kristie_syda.friendkeeper.Fragments;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.Activities.HomeActivity;
 import com.example.kristie_syda.friendkeeper.Activities.SignUpActivity;
+import com.example.kristie_syda.friendkeeper.NetworkConnection;
 import com.example.kristie_syda.friendkeeper.R;
 import com.parse.LogInCallback;
 import com.parse.ParseException;
@@ -62,22 +64,31 @@ public class MainFragment extends Fragment {
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseUser.logInInBackground(userName.getText().toString(), password.getText().toString(), new LogInCallback() {
-                    @Override
-                    public void done(ParseUser user, ParseException e) {
-                        if(user != null){
-                            int duration = Toast.LENGTH_SHORT;
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "User Logged in", duration);
-                            toast.show();
-                            Intent hIntent = new Intent(getActivity(),HomeActivity.class);
-                            startActivity(hIntent);
-                        } else {
-                            int duration = Toast.LENGTH_SHORT;
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Incorrect Username or Password. Try again", duration);
-                            toast.show();
+                //if not connected to internet show Alert
+                if(!NetworkConnection.isConnected(getActivity().getApplicationContext())){
+                    AlertDialog.Builder connectionAlert = new AlertDialog.Builder(getActivity());
+                    connectionAlert.setTitle("No Internet Connection");
+                    connectionAlert.setMessage("Must have Internet Connection to Login.");
+                    connectionAlert.setPositiveButton("Okay",null);
+                    connectionAlert.show();
+                } else {
+                    ParseUser.logInInBackground(userName.getText().toString(), password.getText().toString(), new LogInCallback() {
+                        @Override
+                        public void done(ParseUser user, ParseException e) {
+                            if (user != null) {
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "User Logged in", duration);
+                                toast.show();
+                                Intent hIntent = new Intent(getActivity(), HomeActivity.class);
+                                startActivity(hIntent);
+                            } else {
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Incorrect Username or Password. Try again", duration);
+                                toast.show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
     }

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.kristie_syda.friendkeeper.NetworkConnection;
 import com.example.kristie_syda.friendkeeper.R;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -77,47 +78,55 @@ public class AddFragment extends Fragment {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if((first.getText().toString().length() == 0)|(last.getText().toString().length() == 0)|(phone.getText().toString().length() == 0)){
-                    //Alert box
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Alert");
-                    alert.setMessage("please leave no fields blank");
-                    alert.setPositiveButton("OKAY", null);
-                    alert.show();
+                //if not connected to internet show Alert
+                if(!NetworkConnection.isConnected(getActivity().getApplicationContext())){
+                    AlertDialog.Builder connectionAlert = new AlertDialog.Builder(getActivity());
+                    connectionAlert.setTitle("No Internet Connection");
+                    connectionAlert.setMessage("Must have Internet Connection to save contacts.");
+                    connectionAlert.setPositiveButton("Okay",null);
+                    connectionAlert.show();
                 } else {
-                    //Get Parse User
-                    ParseUser currentUser = ParseUser.getCurrentUser();
-                    ParseObject contact = new ParseObject("Contacts");
-                    contact.put("User", currentUser);
-                    contact.put("FirstName",first.getText().toString());
-                    contact.put("LastName", last.getText().toString());
-                    try {
-                        contact.put("Phone", Integer.parseInt(phone.getText().toString()));
-                        contact.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    //contact saved
-                                    int duration = Toast.LENGTH_SHORT;
-                                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was saved!", duration);
-                                    toast.show();
-                                    mListener.saveCompleted();
-                                } else {
-                                    int duration = Toast.LENGTH_SHORT;
-                                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
-                                    toast.show();
-                                }
-                            }
-                        });
-                    }catch (NumberFormatException e) {
+                    if ((first.getText().toString().length() == 0) | (last.getText().toString().length() == 0) | (phone.getText().toString().length() == 0)) {
                         //Alert box
                         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                         alert.setTitle("Alert");
-                        alert.setMessage("phone number is incorrect");
+                        alert.setMessage("please leave no fields blank");
                         alert.setPositiveButton("OKAY", null);
                         alert.show();
-                        e.printStackTrace();
+                    } else {
+                        //Get Parse User
+                        ParseUser currentUser = ParseUser.getCurrentUser();
+                        ParseObject contact = new ParseObject("Contacts");
+                        contact.put("User", currentUser);
+                        contact.put("FirstName", first.getText().toString());
+                        contact.put("LastName", last.getText().toString());
+                        try {
+                            contact.put("Phone", Integer.parseInt(phone.getText().toString()));
+                            contact.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e == null) {
+                                        //contact saved
+                                        int duration = Toast.LENGTH_SHORT;
+                                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was saved!", duration);
+                                        toast.show();
+                                        mListener.saveCompleted();
+                                    } else {
+                                        int duration = Toast.LENGTH_SHORT;
+                                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
+                                        toast.show();
+                                    }
+                                }
+                            });
+                        } catch (NumberFormatException e) {
+                            //Alert box
+                            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                            alert.setTitle("Alert");
+                            alert.setMessage("phone number is incorrect");
+                            alert.setPositiveButton("OKAY", null);
+                            alert.show();
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

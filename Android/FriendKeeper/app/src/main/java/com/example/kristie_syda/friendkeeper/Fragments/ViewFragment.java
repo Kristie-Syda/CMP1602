@@ -1,6 +1,7 @@
 package com.example.kristie_syda.friendkeeper.Fragments;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.ContactObject;
+import com.example.kristie_syda.friendkeeper.NetworkConnection;
 import com.example.kristie_syda.friendkeeper.R;
 import com.parse.GetCallback;
 import com.parse.ParseObject;
@@ -84,23 +86,32 @@ public class ViewFragment extends Fragment {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ParseQuery<ParseObject> query = ParseQuery.getQuery("Contacts");
-                query.getInBackground(mListener.getObject().getmObjectId(), new GetCallback<ParseObject>() {
-                    @Override
-                    public void done(ParseObject object, com.parse.ParseException e) {
-                        if(e == null){
-                            object.deleteInBackground();
-                            int duration = Toast.LENGTH_SHORT;
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was deleted!", duration);
-                            toast.show();
-                            mListener.deleteCompleted();
-                        } else {
-                            int duration = Toast.LENGTH_SHORT;
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
-                            toast.show();
+                //if not connected to internet show Alert
+                if(!NetworkConnection.isConnected(getActivity().getApplicationContext())){
+                    AlertDialog.Builder connectionAlert = new AlertDialog.Builder(getActivity());
+                    connectionAlert.setTitle("No Internet Connection");
+                    connectionAlert.setMessage("Must have Internet Connection to delete contacts.");
+                    connectionAlert.setPositiveButton("Okay",null);
+                    connectionAlert.show();
+                } else {
+                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Contacts");
+                    query.getInBackground(mListener.getObject().getmObjectId(), new GetCallback<ParseObject>() {
+                        @Override
+                        public void done(ParseObject object, com.parse.ParseException e) {
+                            if (e == null) {
+                                object.deleteInBackground();
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was deleted!", duration);
+                                toast.show();
+                                mListener.deleteCompleted();
+                            } else {
+                                int duration = Toast.LENGTH_SHORT;
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
+                                toast.show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
         });
 

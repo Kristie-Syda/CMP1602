@@ -1,5 +1,6 @@
 package com.example.kristie_syda.friendkeeper.Fragments;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.Activities.HomeActivity;
+import com.example.kristie_syda.friendkeeper.NetworkConnection;
 import com.example.kristie_syda.friendkeeper.R;
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -54,38 +56,47 @@ public class SignUpFragment extends Fragment {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Create New User
-                ParseUser user = new ParseUser();
-                user.setUsername(userName.getText().toString());
-                user.setEmail(email.getText().toString());
-                user.setPassword(password.getText().toString());
-                user.put("First", firstName.getText().toString());
-                user.put("Last", lastName.getText().toString());
-                user.signUpInBackground(new SignUpCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if ((userName.getText().toString().length() == 0)||(email.getText().toString().length() == 0)||(password.getText().toString().length() == 0)) {
-                            //required fields were blank
-                            int duration = Toast.LENGTH_SHORT;
-                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: username, email & password are required fields ", duration);
-                            toast.show();
-                        } else {
-                            if (e == null) {
-                                //User was created -- take to home screen
+                //if not connected to internet show Alert
+                if(!NetworkConnection.isConnected(getActivity().getApplicationContext())){
+                    AlertDialog.Builder connectionAlert = new AlertDialog.Builder(getActivity());
+                    connectionAlert.setTitle("No Internet Connection");
+                    connectionAlert.setMessage("Must have Internet Connection to Create a User.");
+                    connectionAlert.setPositiveButton("Okay",null);
+                    connectionAlert.show();
+                } else {
+                    //Create New User
+                    ParseUser user = new ParseUser();
+                    user.setUsername(userName.getText().toString());
+                    user.setEmail(email.getText().toString());
+                    user.setPassword(password.getText().toString());
+                    user.put("First", firstName.getText().toString());
+                    user.put("Last", lastName.getText().toString());
+                    user.signUpInBackground(new SignUpCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if ((userName.getText().toString().length() == 0) || (email.getText().toString().length() == 0) || (password.getText().toString().length() == 0)) {
+                                //required fields were blank
                                 int duration = Toast.LENGTH_SHORT;
-                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "User was created!", duration);
+                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: username, email & password are required fields ", duration);
                                 toast.show();
-                                Intent hIntent = new Intent(getActivity(), HomeActivity.class);
-                                startActivity(hIntent);
                             } else {
-                                //error when user was created
-                                int duration = Toast.LENGTH_SHORT;
-                                Toast toast = Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), duration);
-                                toast.show();
+                                if (e == null) {
+                                    //User was created -- take to home screen
+                                    int duration = Toast.LENGTH_SHORT;
+                                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "User was created!", duration);
+                                    toast.show();
+                                    Intent hIntent = new Intent(getActivity(), HomeActivity.class);
+                                    startActivity(hIntent);
+                                } else {
+                                    //error when user was created
+                                    int duration = Toast.LENGTH_SHORT;
+                                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), e.getMessage(), duration);
+                                    toast.show();
+                                }
                             }
                         }
+                    });
                 }
-            });
             }
         });
 
