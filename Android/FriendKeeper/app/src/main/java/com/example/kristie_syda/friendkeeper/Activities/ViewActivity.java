@@ -27,6 +27,7 @@ public class ViewActivity extends AppCompatActivity implements ViewFragment.view
         //show action bar
         ActionBar bar = getSupportActionBar();
         bar.isShowing();
+        bar.setDisplayHomeAsUpEnabled(true);
 
         if(savedInstanceState == null){
             //Load up Add Fragment
@@ -62,6 +63,8 @@ public class ViewActivity extends AppCompatActivity implements ViewFragment.view
             main.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(main);
             return true;
+        } else if(id == android.R.id.home){
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }
