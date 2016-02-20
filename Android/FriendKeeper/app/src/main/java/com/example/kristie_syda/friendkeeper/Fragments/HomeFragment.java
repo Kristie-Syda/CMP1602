@@ -105,8 +105,9 @@ public class HomeFragment extends Fragment {
                         String last = contact.getString("LastName").toString();
                         String first = contact.get("FirstName").toString();
                         int phone = contact.getInt("Phone");
+                        String type = contact.get("Type").toString();
                         String objId = contact.getObjectId();
-                        ContactObject obj = new ContactObject(first, last, phone, objId);
+                        ContactObject obj = new ContactObject(first, last, phone, objId,type);
                         mAdapter.add(obj);
                     }
                 } else {

@@ -21,9 +21,9 @@
             android:hint="First Name"
             android:paddingLeft="10dp"
             android:background="#fff"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="191dp" />
+            android:layout_marginTop="42dp"
+            android:layout_below="@+id/textView2"
+            android:layout_centerHorizontal="true" />
 
         <EditText
             android:layout_width="200dp"
@@ -59,7 +59,7 @@
             android:layout_below="@id/add_phone"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="10dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="100dp"
             android:background="#000"/>
 
         <Button
@@ -71,7 +71,7 @@
             android:textStyle="bold"
             android:background="#b40404"
             android:layout_below="@id/add_phone"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="100dp"
             android:layout_marginStart="10dp"
             android:layout_alignParentStart="true" />
 
@@ -87,6 +87,14 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="51dp"
             android:textAlignment="center"/>
+
+        <Spinner
+            android:layout_width="200dp"
+            android:layout_height="30dp"
+            android:id="@+id/type"
+            android:layout_marginTop="21dp"
+            android:layout_below="@+id/add_phone"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
 </RelativeLayout>

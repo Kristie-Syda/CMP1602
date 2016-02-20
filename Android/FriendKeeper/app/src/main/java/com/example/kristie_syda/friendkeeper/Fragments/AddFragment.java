@@ -8,8 +8,11 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.NetworkConnection;
@@ -19,12 +22,15 @@ import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.util.ArrayList;
+
 /**
  * Created by Kristie_Syda on 2/4/16.
  */
 public class AddFragment extends Fragment {
     public static final String TAG = "AddFragment.TAG";
     private addListener mListener;
+    private String mType;
 
     //FACTORY METHOD
     public static AddFragment newInstance(){
@@ -64,6 +70,27 @@ public class AddFragment extends Fragment {
         final EditText last = (EditText) getView().findViewById(R.id.add_last);
         final EditText phone = (EditText) getView().findViewById(R.id.add_phone);
 
+        //Spinner
+        //Array for adapter
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Pick a Type");
+        list.add("Home Phone");
+        list.add("Cell Phone");
+        list.add("Work");
+        //adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,list);
+        Spinner spinner = (Spinner) getView().findViewById(R.id.type);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mType = parent.getItemAtPosition(position).toString();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
         //Cancel Button
         Button cancel = (Button) getView().findViewById(R.id.btn_addCancel);
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -100,32 +127,43 @@ public class AddFragment extends Fragment {
                         contact.put("User", currentUser);
                         contact.put("FirstName", first.getText().toString());
                         contact.put("LastName", last.getText().toString());
-                        try {
-                            contact.put("Phone", Integer.parseInt(phone.getText().toString()));
-                            contact.saveInBackground(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-                                    if (e == null) {
-                                        //contact saved
-                                        int duration = Toast.LENGTH_SHORT;
-                                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was saved!", duration);
-                                        toast.show();
-                                        mListener.saveCompleted();
-                                    } else {
-                                        int duration = Toast.LENGTH_SHORT;
-                                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
-                                        toast.show();
+
+                        if(mType == "Pick a Type"){
+                            //Alert for type spinner
+                            AlertDialog.Builder typeAlert = new AlertDialog.Builder(getActivity());
+                            typeAlert.setTitle("Alert");
+                            typeAlert.setMessage("Please choose a number type.");
+                            typeAlert.setPositiveButton("OKAY", null);
+                            typeAlert.show();
+                        } else {
+                            contact.put("Type",mType);
+                            try {
+                                contact.put("Phone", Integer.parseInt(phone.getText().toString()));
+                                contact.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if (e == null) {
+                                            //contact saved
+                                            int duration = Toast.LENGTH_SHORT;
+                                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was saved!", duration);
+                                            toast.show();
+                                            mListener.saveCompleted();
+                                        } else {
+                                            int duration = Toast.LENGTH_SHORT;
+                                            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
+                                            toast.show();
+                                        }
                                     }
-                                }
-                            });
-                        } catch (NumberFormatException e) {
-                            //Alert box
-                            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                            alert.setTitle("Alert");
-                            alert.setMessage("phone number is incorrect");
-                            alert.setPositiveButton("OKAY", null);
-                            alert.show();
-                            e.printStackTrace();
+                                });
+                            } catch (NumberFormatException e) {
+                                //Alert box
+                                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                                alert.setTitle("Alert");
+                                alert.setMessage("phone number is incorrect");
+                                alert.setPositiveButton("OKAY", null);
+                                alert.show();
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }

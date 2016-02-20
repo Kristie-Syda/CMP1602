@@ -9,6 +9,7 @@ public class ContactObject implements Serializable {
     private String mFirst;
     private String mLast;
     private String mObjectId;
+    private String mType;
     private int mPhone;
 
     //Getters
@@ -27,11 +28,15 @@ public class ContactObject implements Serializable {
     public String getmObjectId() {
         return mObjectId;
     }
+    public String getmType() {
+        return mType;
+    }
 
-    public ContactObject(String first, String last, int phone, String id){
+    public ContactObject(String first, String last, int phone, String id, String type){
         mFirst = first;
         mLast = last;
         mPhone = phone;
         mObjectId = id;
+        mType = type;
     }
 }

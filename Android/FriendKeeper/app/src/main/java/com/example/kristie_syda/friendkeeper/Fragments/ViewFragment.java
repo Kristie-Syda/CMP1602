@@ -10,8 +10,11 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,14 +28,16 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 
 
 /**
  * Created by Kristie_Syda on 2/4/16.
  */
-public class ViewFragment extends Fragment implements TextWatcher {
+public class ViewFragment extends Fragment {
     public static final String TAG = "ViewFragment.TAG";
     private viewListener mListener;
+    private String mType;
 
     //FACTORY METHOD
     public static ViewFragment newInstance(){
@@ -47,19 +52,6 @@ public class ViewFragment extends Fragment implements TextWatcher {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.frag_view,container,false);
         return view;
-    }
-
-    @Override
-    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-    }
-    @Override
-    public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-    }
-    @Override
-    public void afterTextChanged(Editable s) {
-
     }
 
     //INTERFACE
@@ -92,43 +84,77 @@ public class ViewFragment extends Fragment implements TextWatcher {
         final EditText phone = (EditText) getView().findViewById(R.id.view_phone);
         phone.setText(Integer.toString(mListener.getObject().getmPhone()));
 
-        //Okay Button
-        Button okay = (Button) getView().findViewById(R.id.btn_viewOkay);
-        okay.setOnClickListener(new View.OnClickListener() {
+        //Spinner
+        Spinner spin = (Spinner) getView().findViewById(R.id.view_spin);
+        //Array for adapter
+        ArrayList<String> list = new ArrayList<>();
+        list.add("Home Phone");
+        list.add("Cell Phone");
+        list.add("Work");
+        //adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_spinner_dropdown_item,list);
+        spin.setAdapter(adapter);
+        int spinPos = adapter.getPosition(mListener.getObject().getmType());
+        spin.setSelection(spinPos);
+        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mType = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                mType = mListener.getObject().getmType();
+            }
+        });
+
+        //Update Button
+        Button update = (Button) getView().findViewById(R.id.btn_viewOkay);
+        update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //check fields
-                if ((first.getText().toString().length() == 0) | (last.getText().toString().length() == 0) | (phone.getText().toString().length() == 0)) {
-                    //Alert box
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle("Alert");
-                    alert.setMessage("please leave no fields blank");
-                    alert.setPositiveButton("OKAY", null);
-                    alert.show();
+                //if not connected to internet show Alert
+                if (!NetworkConnection.isConnected(getActivity().getApplicationContext())) {
+                    AlertDialog.Builder connectionAlert = new AlertDialog.Builder(getActivity());
+                    connectionAlert.setTitle("No Internet Connection");
+                    connectionAlert.setMessage("Must have Internet Connection to update contacts.");
+                    connectionAlert.setPositiveButton("Okay", null);
+                    connectionAlert.show();
                 } else {
-                    // Update info in parse
-                    ParseQuery<ParseObject> query = ParseQuery.getQuery("Contacts");
-                    query.getInBackground(mListener.getObject().getmObjectId(), new GetCallback<ParseObject>() {
-                        public void done(ParseObject contact, com.parse.ParseException e) {
-                            if (e == null) {
-                                contact.put("FirstName", first.getText().toString());
-                                contact.put("LastName", last.getText().toString());
-                                try {
-                                    contact.put("Phone", Integer.parseInt(phone.getText().toString()));
-                                } catch (NumberFormatException er) {
-                                    //Alert box
-                                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                                    alert.setTitle("Alert");
-                                    alert.setMessage("phone number is incorrect");
-                                    alert.setPositiveButton("OKAY", null);
-                                    alert.show();
-                                    er.printStackTrace();
+                    //check fields
+                    if ((first.getText().toString().length() == 0) | (last.getText().toString().length() == 0) | (phone.getText().toString().length() == 0)) {
+                        //Alert box
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                        alert.setTitle("Alert");
+                        alert.setMessage("please leave no fields blank");
+                        alert.setPositiveButton("OKAY", null);
+                        alert.show();
+                    } else {
+                        // Update info in parse
+                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Contacts");
+                        query.getInBackground(mListener.getObject().getmObjectId(), new GetCallback<ParseObject>() {
+                            public void done(ParseObject contact, com.parse.ParseException e) {
+                                if (e == null) {
+                                    contact.put("FirstName", first.getText().toString());
+                                    contact.put("LastName", last.getText().toString());
+                                    contact.put("Type", mType);
+                                    try {
+                                        contact.put("Phone", Integer.parseInt(phone.getText().toString()));
+                                    } catch (NumberFormatException er) {
+                                        //Alert box
+                                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                                        alert.setTitle("Alert");
+                                        alert.setMessage("phone number is incorrect");
+                                        alert.setPositiveButton("OKAY", null);
+                                        alert.show();
+                                        er.printStackTrace();
+                                    }
+                                    contact.saveInBackground();
+                                    mListener.deleteCompleted();
                                 }
-                                contact.saveInBackground();
                             }
-                        }
-                    });
-                    mListener.deleteCompleted();
+                        });
+                    }
                 }
             }
         });
