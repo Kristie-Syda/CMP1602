@@ -17,9 +17,6 @@
 
 #pragma mark -
 #pragma mark Views
--(void)viewWillAppear:(BOOL)animated{
-    
-}
 - (void)viewDidLoad {
     //set text to textfields
     first.text = self.current.first;
@@ -139,7 +136,6 @@
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
     return typeArray[row];
 }
-
 //delegate
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
     //whatever user chose

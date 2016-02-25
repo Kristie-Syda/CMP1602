@@ -24,6 +24,11 @@
     // Initialize Parse
     [Parse setApplicationId:@"XSvwBB0y1Tof3v7zTu0FvyMwTe8HtBg2lU8Ji7o2"
                   clientKey:@"CU5rm1iL1Ex9hIyJF5XEPsrGtX4aKh8eX46t1oXK"];
+    //Set ACL
+    PFACL *defaultACL = [PFACL ACL];
+    [defaultACL setPublicReadAccess:false];
+    [defaultACL setPublicWriteAccess:false];
+    [PFACL setDefaultACL:defaultACL withAccessForCurrentUser:YES];
     return YES;
 }
 
