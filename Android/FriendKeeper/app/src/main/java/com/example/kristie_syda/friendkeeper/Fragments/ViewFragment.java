@@ -5,8 +5,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.ContactObject;
@@ -24,11 +22,9 @@ import com.example.kristie_syda.friendkeeper.R;
 import com.parse.GetCallback;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
-import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 
 /**
@@ -122,38 +118,48 @@ public class ViewFragment extends Fragment {
                     connectionAlert.show();
                 } else {
                     //check fields
-                    if ((first.getText().toString().length() == 0) | (last.getText().toString().length() == 0) | (phone.getText().toString().length() == 0)) {
+                    if ((!isString(first.getText().toString()))|(!isString(last.getText().toString()))) {
                         //Alert box
                         AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                         alert.setTitle("Alert");
-                        alert.setMessage("please leave no fields blank");
+                        alert.setMessage("Please make sure First & Last name fields are not blank. No Symbols, Spaces or Numbers. (Example: John)");
                         alert.setPositiveButton("OKAY", null);
                         alert.show();
                     } else {
-                        // Update info in parse
-                        ParseQuery<ParseObject> query = ParseQuery.getQuery("Contacts");
-                        query.getInBackground(mListener.getObject().getmObjectId(), new GetCallback<ParseObject>() {
-                            public void done(ParseObject contact, com.parse.ParseException e) {
-                                if (e == null) {
-                                    contact.put("FirstName", first.getText().toString());
-                                    contact.put("LastName", last.getText().toString());
-                                    contact.put("Type", mType);
-                                    try {
-                                        contact.put("Phone", Integer.parseInt(phone.getText().toString()));
-                                    } catch (NumberFormatException er) {
-                                        //Alert box
-                                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                                        alert.setTitle("Alert");
-                                        alert.setMessage("phone number is incorrect");
-                                        alert.setPositiveButton("OKAY", null);
-                                        alert.show();
-                                        er.printStackTrace();
+                        //check phone field
+                        if (isPhoneNumber(phone.getText().toString())) {
+                            // Update info in parse
+                            ParseQuery<ParseObject> query = ParseQuery.getQuery("Contacts");
+                            query.getInBackground(mListener.getObject().getmObjectId(), new GetCallback<ParseObject>() {
+                                public void done(ParseObject contact, com.parse.ParseException e) {
+                                    if (e == null) {
+                                        contact.put("FirstName", first.getText().toString());
+                                        contact.put("LastName", last.getText().toString());
+                                        contact.put("Type", mType);
+                                        try {
+                                            contact.put("Phone", Integer.parseInt(phone.getText().toString()));
+                                        } catch (NumberFormatException er) {
+                                            //Alert box
+                                            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                                            alert.setTitle("Alert");
+                                            alert.setMessage("phone number is incorrect");
+                                            alert.setPositiveButton("OKAY", null);
+                                            alert.show();
+                                            er.printStackTrace();
+                                        }
+                                        contact.saveInBackground();
+                                        mListener.deleteCompleted();
                                     }
-                                    contact.saveInBackground();
-                                    mListener.deleteCompleted();
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            //Phone number is not correct
+                            AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                            alert.setTitle("Phone Number is incorrect");
+                            alert.setMessage("Please enter a 10 digit phone number (Example:7048675309)");
+                            alert.setPositiveButton("OKAY", null);
+                            alert.show();
+                        }
                     }
                 }
             }
@@ -195,5 +201,21 @@ public class ViewFragment extends Fragment {
         });
 
 
+    }
+
+    //VALIDATION METHODS
+    public boolean isPhoneNumber(String number){
+        if((number.length() == 10)&&(number.matches("[0-9]+"))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    public boolean isString(String letters){
+        if((letters.length() > 0)&&(Pattern.matches("[a-zA-Z]+",letters))){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
