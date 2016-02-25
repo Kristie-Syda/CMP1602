@@ -37,6 +37,37 @@
         return false;
     }
 }
+//Pattern validation
+-(BOOL)isPhoneNumber:(NSString *)num {
+    if(num.length == 10)
+    {
+        NSCharacterSet *numbersOnly = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+        NSCharacterSet *characterSetFromTextField = [NSCharacterSet characterSetWithCharactersInString:num];
+        BOOL stringIsValid = [numbersOnly isSupersetOfSet:characterSetFromTextField];
+        return stringIsValid;
+    } else {
+        return NO;
+    }
+}
+//String Validation
+-(BOOL)isString:(NSString *)string{
+    if (string.length > 0) {
+        NSCharacterSet *letters = [NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"];
+        letters = [letters invertedSet];
+        NSRange range = [string rangeOfCharacterFromSet:letters];
+        if (range.location != NSNotFound) {
+            //has invalid characters
+            return NO;
+        } else {
+            return YES;
+        }
+        
+    } else {
+        //field is empty
+        return NO;
+    }
+}
+
 
 #pragma mark -
 #pragma mark Views
@@ -48,6 +79,7 @@
     //init the array
     self.typeArray = @[@"Home Phone", @"Cell Phone", @"Work"];
     type = @"Home Phone";
+    
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -75,7 +107,7 @@
 
 //Save Button
 -(IBAction)OnSave{
-    //if NO Internet alert user
+    //If NO Internet alert user
     if(![self Internet]){
         //send alert if fields are blank
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No Internet Connection"
@@ -85,50 +117,64 @@
                                              otherButtonTitles:nil, nil];
         [alert show];
 
-    } else {
+    }
+    //Internet
+    else {
         //check to see if any fields are empty
-        if((first.text.length == 0)||(last.text.length == 0)||(number.text.length == 0)){
+        if((![self isString:first.text])||(![self isString:last.text])){
             //send alert if fields are blank
             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert"
-                                                           message:@"Please fill in all fields"
+                                                           message:@"Please make sure First & Last name fields are not blank. No Symbols or Spaces. (Example: John)"
                                                           delegate:nil
                                                  cancelButtonTitle:@"Okay"
                                                  otherButtonTitles:nil, nil];
             [alert show];
-        } else {
-            //convert info to parse object
-            PFObject *contact = [PFObject objectWithClassName:@"Contacts"];
-            contact[@"FirstName"] = first.text;
-            contact[@"LastName"] = last.text;
-            contact[@"Type"] = type;
-            
-            //convert number string into NSNumber
-            int num = [number.text intValue];
-            NSNumber *phone = [NSNumber numberWithInt:num];
-            contact[@"Phone"] = phone;
-            
-            //save user
-            contact[@"User"] = [PFUser currentUser];
-            [contact pinInBackground];
-            [contact saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                if (succeeded) {
-                    //send alert
-                    [self toastMessage];
-                    //Load Home Screen
-                    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
-                                                                         bundle:nil];
-                    HomeViewController *home =
-                    [storyboard instantiateViewControllerWithIdentifier:@"home"];
-                    
-                    [self presentViewController:home
-                                       animated:YES
-                                     completion:nil];
-                } else {
-                    NSLog(@"object didnt saved");
-                }
-            }];
         }
+        //check to see if number is correct
+        else if([self isPhoneNumber:number.text]){
+                //convert info to parse object
+                PFObject *contact = [PFObject objectWithClassName:@"Contacts"];
+                contact[@"FirstName"] = first.text;
+                contact[@"LastName"] = last.text;
+                contact[@"Type"] = type;
 
+                //convert number string into NSNumber
+                int num = [number.text intValue];
+                NSNumber *phone = [NSNumber numberWithInt:num];
+                contact[@"Phone"] = phone;
+                
+                //save user
+                contact[@"User"] = [PFUser currentUser];
+                [contact pinInBackground];
+                [contact saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                    if (succeeded) {
+                        //send alert
+                        [self toastMessage];
+                        //Load Home Screen
+                        UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                                             bundle:nil];
+                        HomeViewController *home =
+                        [storyboard instantiateViewControllerWithIdentifier:@"home"];
+                        
+                        [self presentViewController:home
+                                           animated:YES
+                                         completion:nil];
+                    } else {
+                        NSLog(@"object didnt saved");
+                    }
+                }];
+
+            }
+        //number is incorrect send alert
+        else {
+            //send alert if number not right
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Phone Number is incorrect"
+                                                           message:@"Please enter a 10 digit phone number (Example:7048675309)"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"Okay"
+                                                 otherButtonTitles:nil, nil];
+                [alert show];
+        }
     }
 }
 //Cancel Button
@@ -153,6 +199,5 @@
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
     //whatever user chose
     type = typeArray[row];
-    NSLog(@"%@",type);
 }
 @end

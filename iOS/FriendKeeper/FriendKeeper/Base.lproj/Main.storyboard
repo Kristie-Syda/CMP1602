@@ -225,6 +225,14 @@
                                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
+                                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwo-Bk-N8j">
+                                                <rect key="frame" x="91" y="260" width="179" height="72"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                <connections>
+                                                    <outlet property="dataSource" destination="wFR-CF-Gs9" id="rI5-sF-Tt1"/>
+                                                    <outlet property="delegate" destination="wFR-CF-Gs9" id="Rdf-xm-3S7"/>
+                                                </connections>
+                                            </pickerView>
                                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JgJ-Pp-lfF">
                                                 <rect key="frame" x="153" y="398" width="102" height="30"/>
                                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -262,14 +270,6 @@
                                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                 <textInputTraits key="textInputTraits"/>
                                             </textField>
-                                            <pickerView contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xwo-Bk-N8j">
-                                                <rect key="frame" x="91" y="260" width="179" height="72"/>
-                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                <connections>
-                                                    <outlet property="dataSource" destination="wFR-CF-Gs9" id="rI5-sF-Tt1"/>
-                                                    <outlet property="delegate" destination="wFR-CF-Gs9" id="Rdf-xm-3S7"/>
-                                                </connections>
-                                            </pickerView>
                                         </subviews>
                                         <color key="backgroundColor" red="0.25942135689354273" green="0.25942135689354273" blue="0.25942135689354273" alpha="1" colorSpace="calibratedRGB"/>
                                     </view>

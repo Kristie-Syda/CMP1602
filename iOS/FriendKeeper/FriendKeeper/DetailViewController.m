@@ -35,6 +35,36 @@
         return false;
     }
 }
+//Pattern validation
+-(BOOL)isPhoneNumber:(NSString *)num {
+    if(num.length == 10)
+    {
+        NSCharacterSet *numbersOnly = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
+        NSCharacterSet *characterSetFromTextField = [NSCharacterSet characterSetWithCharactersInString:num];
+        BOOL stringIsValid = [numbersOnly isSupersetOfSet:characterSetFromTextField];
+        return stringIsValid;
+    } else {
+        return NO;
+    }
+}
+//String Validation
+-(BOOL)isString:(NSString *)string{
+    if (string.length > 0) {
+        NSCharacterSet *letters = [NSCharacterSet characterSetWithCharactersInString:@"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-"];
+        letters = [letters invertedSet];
+        NSRange range = [string rangeOfCharacterFromSet:letters];
+        if (range.location != NSNotFound) {
+            //String has illegal characters
+            return NO;
+        } else {
+            return YES;
+        }
+
+    } else {
+        //field is empty
+        return NO;
+    }
+}
 
 #pragma mark -
 #pragma mark Views
@@ -42,7 +72,7 @@
     //set text to textfields
     first.text = self.current.first;
     last.text = self.current.last;
-    
+
     //init the array
     self.typeArray = @[@"Home Phone", @"Cell Phone", @"Work"];
    
@@ -125,6 +155,7 @@
 }
 //Okay button
 -(IBAction)onOkay{
+    //No Internet
     if(![self Internet]){
         //Send Alert
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No Internet Connection"
@@ -135,40 +166,65 @@
         [alert show];
 
     } else {
-        PFQuery *query = [PFQuery queryWithClassName:@"Contacts"];
-        
-        // Retrieve the object by id
-        [query getObjectInBackgroundWithId:self.current.objectId.objectId
-                                     block:^(PFObject *contact, NSError *error) {
-                                         contact[@"FirstName"] = first.text;
-                                         contact[@"LastName"] = last.text;
-                                         contact[@"Type"] = type;
-                                         
-                                         //convert number string into NSNumber
-                                         int num = [number.text intValue];
-                                         NSNumber *phone = [NSNumber numberWithInt:num];
-                                         contact[@"Phone"] = phone;
-                                         
-                                         [contact saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                                             if (succeeded) {
-                                                 //send alert
-                                                 [self toastMessage:@"contact updated"];
-                                                 //Load Home Screen
-                                                 UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
-                                                                                                      bundle:nil];
-                                                 HomeViewController *home =
-                                                 [storyboard instantiateViewControllerWithIdentifier:@"home"];
+        //Internet is available
+        if((![self isString:first.text])||(![self isString:last.text])){
+            //send alert if fields are blank
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert"
+                                                           message:@"Please make sure First & Last name fields are not blank. No Symbols or Spaces. (Example: John)"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"Okay"
+                                                 otherButtonTitles:nil, nil];
+            [alert show];
+        } else {
+            //No blank fields
+            if([self isPhoneNumber:number.text]){
+                //Number is 10 digits only can now update object
+                PFQuery *query = [PFQuery queryWithClassName:@"Contacts"];
+                // Retrieve the object by id
+                [query getObjectInBackgroundWithId:self.current.objectId.objectId
+                                             block:^(PFObject *contact, NSError *error) {
+                                                 contact[@"FirstName"] = first.text;
+                                                 contact[@"LastName"] = last.text;
+                                                 contact[@"Type"] = type;
                                                  
-                                                 [self presentViewController:home
-                                                                    animated:YES
-                                                                  completion:nil];
-                                             } else {
-                                                 NSLog(@"object didnt update");
-                                             }
-                                         }];
-                                         
-                                     }];
+                                                 //convert number string into NSNumber
+                                                 int num = [number.text intValue];
+                                                 NSNumber *phone = [NSNumber numberWithInt:num];
+                                                 contact[@"Phone"] = phone;
+                                                 
+                                                 [contact saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                                                     if (succeeded) {
+                                                         //send alert
+                                                         [self toastMessage:@"contact updated"];
+                                                         //Load Home Screen
+                                                         UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                                                                              bundle:nil];
+                                                         HomeViewController *home =
+                                                         [storyboard instantiateViewControllerWithIdentifier:@"home"];
+                                                         
+                                                         [self presentViewController:home
+                                                                            animated:YES
+                                                                          completion:nil];
+                                                     } else {
+                                                         NSLog(@"object didnt update");
+                                                     }
+                                                 }];
+                                                 
+                                             }];
 
+                
+            } else {
+                //Number is not correct send alert
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Phone Number is incorrect"
+                                                               message:@"Please enter a 10 digit phone number (Example:7048675309)"
+                                                              delegate:nil
+                                                     cancelButtonTitle:@"Okay"
+                                                     otherButtonTitles:nil, nil];
+                [alert show];
+
+            }
+            
+        }
     }
 }
 
