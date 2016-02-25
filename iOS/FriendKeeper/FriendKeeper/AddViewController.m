@@ -39,7 +39,7 @@
 }
 //Pattern validation
 -(BOOL)isPhoneNumber:(NSString *)num {
-    if(num.length == 10)
+    if(num.length == 7)
     {
         NSCharacterSet *numbersOnly = [NSCharacterSet characterSetWithCharactersInString:@"0123456789"];
         NSCharacterSet *characterSetFromTextField = [NSCharacterSet characterSetWithCharactersInString:num];
@@ -169,7 +169,7 @@
         else {
             //send alert if number not right
             UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Phone Number is incorrect"
-                                                           message:@"Please enter a 10 digit phone number (Example:7048675309)"
+                                                           message:@"Please enter a 7 digit phone number (Example:8675309)"
                                                           delegate:nil
                                                  cancelButtonTitle:@"Okay"
                                                  otherButtonTitles:nil, nil];
