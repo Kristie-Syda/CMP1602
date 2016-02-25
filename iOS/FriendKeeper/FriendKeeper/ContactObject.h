@@ -14,4 +14,5 @@
 @property(nonatomic,strong)NSString *last;
 @property(nonatomic,strong)PFObject *objectId;
 @property(nonatomic,strong)NSNumber *phone;
+@property(nonatomic,strong)NSString *type;
 @end

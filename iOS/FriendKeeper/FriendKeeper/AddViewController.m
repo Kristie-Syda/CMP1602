@@ -14,6 +14,7 @@
 @end
 
 @implementation AddViewController
+@synthesize typeArray;
 
 #pragma mark -
 #pragma mark Views
@@ -21,6 +22,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    //init the array
+    self.typeArray = @[@"Home Phone", @"Cell Phone", @"Work"];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -62,6 +66,7 @@
         PFObject *contact = [PFObject objectWithClassName:@"Contacts"];
         contact[@"FirstName"] = first.text;
         contact[@"LastName"] = last.text;
+        contact[@"Type"] = type;
         
         //convert number string into NSNumber
         int num = [number.text intValue];
@@ -94,4 +99,23 @@
     [self dismissViewControllerAnimated:true completion:nil];
 }
 
+#pragma mark -
+#pragma mark PickerView
+//dataSource
+- (NSInteger)numberOfComponentsInPickerView: (UIPickerView *)pickerView {
+    return 1;
+}
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component{
+    return  typeArray.count;
+}
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component{
+    return typeArray[row];
+}
+
+//delegate
+-(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component{
+    //whatever user chose
+    type = typeArray[row];
+    NSLog(@"%@",type);
+}
 @end

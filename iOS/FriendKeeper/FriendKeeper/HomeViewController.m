@@ -50,6 +50,7 @@
                 contact.last = object[@"LastName"];
                 contact.phone = object[@"Phone"];
                 contact.objectId = object;
+                contact.type = object[@"Type"];
                 
                 //Add objects to array
                 [contacts addObject:contact];

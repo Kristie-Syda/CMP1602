@@ -9,13 +9,16 @@
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
 
-@interface AddViewController : UIViewController
+@interface AddViewController : UIViewController <UIPickerViewDelegate, UIPickerViewDataSource>
 {
     IBOutlet UITextField *first;
     IBOutlet UITextField *last;
     IBOutlet UITextField *number;
+    IBOutlet UIPickerView *picker;
+    NSString *type;
 }
 -(IBAction)OnSave;
 -(IBAction)OnCancel;
 
+@property (strong, nonatomic)NSArray *typeArray;
 @end

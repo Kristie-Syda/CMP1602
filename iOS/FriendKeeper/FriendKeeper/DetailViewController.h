@@ -11,14 +11,18 @@
 #import "HomeViewController.h"
 #import <Parse/Parse.h>
 
-@interface DetailViewController : UIViewController
+@interface DetailViewController : UIViewController <UIPickerViewDelegate, UIPickerViewDataSource>
 {
-    IBOutlet UILabel *first;
-    IBOutlet UILabel *last;
-    IBOutlet UILabel *number;
+    IBOutlet UITextField *first;
+    IBOutlet UITextField *last;
+    IBOutlet UITextField *number;
+    NSString *type;
 }
 
 -(IBAction)onDelete;
 -(IBAction)onOkay;
+-(IBAction)back;
 @property(nonatomic,strong)ContactObject *current;
+@property (strong, nonatomic)NSArray *typeArray;
+@property(strong,nonatomic)IBOutlet UIPickerView *picker;
 @end
