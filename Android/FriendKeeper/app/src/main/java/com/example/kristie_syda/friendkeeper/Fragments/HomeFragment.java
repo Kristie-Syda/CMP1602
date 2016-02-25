@@ -120,6 +120,7 @@ public class HomeFragment extends Fragment {
         } else {
             ParseQuery<ParseObject> query = ParseQuery.getQuery("Contacts");
             query.fromLocalDatastore();
+            query.whereEqualTo("User",mUser);
             query.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> objects, ParseException e) {

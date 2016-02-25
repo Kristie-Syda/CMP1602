@@ -16,6 +16,27 @@
 @synthesize current,typeArray,picker;
 
 #pragma mark -
+#pragma mark System
+//checks for internet
+-(BOOL)Internet{
+    //Make address string a url
+    NSString *address = @"https://parse.com/";
+    NSURL *url = [NSURL URLWithString:address];
+    //create request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setHTTPMethod:@"HEAD"];
+    //send request
+    NSHTTPURLResponse *results;
+    [NSURLConnection sendSynchronousRequest:request returningResponse:&results error:NULL];
+    //get results
+    if([results statusCode] == 200){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+#pragma mark -
 #pragma mark Views
 - (void)viewDidLoad {
     //set text to textfields
@@ -27,10 +48,13 @@
    
     //get type in parse and set picker
     if([self.current.type isEqualToString:@"Home Phone"]){
+        type = @"Home Phone";
         [self.picker selectRow:0 inComponent:0 animated:NO];
     } else if([self.current.type isEqualToString:@"Cell Phone"]){
+        type = @"Cell Phone";
         [self.picker selectRow:1 inComponent:0 animated:NO];
     } else {
+        type = @"Work";
         [self.picker selectRow:2 inComponent:0 animated:NO];
     }
     
@@ -60,28 +84,40 @@
     });
 }
 
-
 #pragma mark -
 #pragma mark Navigation
 //Delete button
 -(IBAction)onDelete{
-    //delete parse object from parse data base
-    [self.current.objectId deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
-        if (!error) {
-            //Present home screen
-            [self toastMessage:@"Contact Deleted"];
-            UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
-                                                                 bundle:nil];
-            HomeViewController *home =
-            [storyboard instantiateViewControllerWithIdentifier:@"home"];
+    if(![self Internet]){
+        //Send Alert
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No Internet Connection"
+                                                       message:@"Must Have Internet to Delete Contact"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"Okay"
+                                             otherButtonTitles:nil, nil];
+        [alert show];
+        
+    } else {
+
+        //delete parse object from parse data base
+        [self.current.objectId unpinInBackground];
+        [self.current.objectId deleteInBackgroundWithBlock:^(BOOL succeeded, NSError * _Nullable error) {
+            if (!error) {
+                //Present home screen
+                [self toastMessage:@"Contact Deleted"];
+                UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                                     bundle:nil];
+                HomeViewController *home =
+                [storyboard instantiateViewControllerWithIdentifier:@"home"];
             
-            [self presentViewController:home
-                               animated:YES
-                             completion:nil];
-        } else {
-            NSLog(@"ERROR");
-        }
-    }];
+                [self presentViewController:home
+                                   animated:YES
+                                 completion:nil];
+            } else {
+                NSLog(@"ERROR");
+            }
+        }];
+    }
 }
 //Back button
 -(IBAction)back{
@@ -89,39 +125,51 @@
 }
 //Okay button
 -(IBAction)onOkay{
-    PFQuery *query = [PFQuery queryWithClassName:@"Contacts"];
-    
-    // Retrieve the object by id
-    [query getObjectInBackgroundWithId:self.current.objectId.objectId
-                                 block:^(PFObject *contact, NSError *error) {
-                                     contact[@"FirstName"] = first.text;
-                                     contact[@"LastName"] = last.text;
-                                     contact[@"Type"] = type;
-                                     
-                                     //convert number string into NSNumber
-                                     int num = [number.text intValue];
-                                     NSNumber *phone = [NSNumber numberWithInt:num];
-                                     contact[@"Phone"] = phone;
-                                     
-                                     [contact saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-                                         if (succeeded) {
-                                             //send alert
-                                             [self toastMessage:@"contact updated"];
-                                             //Load Home Screen
-                                             UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
-                                                                                                  bundle:nil];
-                                             HomeViewController *home =
-                                             [storyboard instantiateViewControllerWithIdentifier:@"home"];
-                                             
-                                             [self presentViewController:home
-                                                                animated:YES
-                                                              completion:nil];
-                                         } else {
-                                             NSLog(@"object didnt update");
-                                         }
+    if(![self Internet]){
+        //Send Alert
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No Internet Connection"
+                                                       message:@"Must Have Internet to Update Contact"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"Okay"
+                                             otherButtonTitles:nil, nil];
+        [alert show];
+
+    } else {
+        PFQuery *query = [PFQuery queryWithClassName:@"Contacts"];
+        
+        // Retrieve the object by id
+        [query getObjectInBackgroundWithId:self.current.objectId.objectId
+                                     block:^(PFObject *contact, NSError *error) {
+                                         contact[@"FirstName"] = first.text;
+                                         contact[@"LastName"] = last.text;
+                                         contact[@"Type"] = type;
+                                         
+                                         //convert number string into NSNumber
+                                         int num = [number.text intValue];
+                                         NSNumber *phone = [NSNumber numberWithInt:num];
+                                         contact[@"Phone"] = phone;
+                                         
+                                         [contact saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                                             if (succeeded) {
+                                                 //send alert
+                                                 [self toastMessage:@"contact updated"];
+                                                 //Load Home Screen
+                                                 UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                                                                      bundle:nil];
+                                                 HomeViewController *home =
+                                                 [storyboard instantiateViewControllerWithIdentifier:@"home"];
+                                                 
+                                                 [self presentViewController:home
+                                                                    animated:YES
+                                                                  completion:nil];
+                                             } else {
+                                                 NSLog(@"object didnt update");
+                                             }
+                                         }];
+                                         
                                      }];
 
-                                 }];
+    }
 }
 
 #pragma mark -

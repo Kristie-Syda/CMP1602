@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <Parse/Parse.h>
+#import <SystemConfiguration/SCNetworkReachability.h>
 
 @interface AddViewController : UIViewController <UIPickerViewDelegate, UIPickerViewDataSource>
 {

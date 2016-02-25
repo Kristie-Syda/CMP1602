@@ -19,6 +19,27 @@
 @implementation HomeViewController
 
 #pragma mark -
+#pragma mark System
+//checks for internet
+-(BOOL)Internet{
+    //Make address string a url
+    NSString *address = @"https://parse.com/";
+    NSURL *url = [NSURL URLWithString:address];
+    //create request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setHTTPMethod:@"HEAD"];
+    //send request
+    NSHTTPURLResponse *results;
+    [NSURLConnection sendSynchronousRequest:request returningResponse:&results error:NULL];
+    //get results
+    if([results statusCode] == 200){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+#pragma mark -
 #pragma mark Managing Views
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -27,39 +48,15 @@
     contacts = [[NSMutableArray alloc]init];
     
     //Get current user info
-    PFUser *currentUser = [PFUser currentUser];
+    currentUser = [PFUser currentUser];
     if (currentUser) {
         welcome.text = [NSString stringWithFormat:@"Welcome %@", currentUser.username];
     } else {
         welcome.text = @"Welcome!";
     }
     
-    //clear array & get new data
-    [contacts removeAllObjects];
-
-    //Get user data from parse
-    PFQuery *query = [PFQuery queryWithClassName:@"Contacts"];
-    [query whereKey:@"User" equalTo:currentUser];
-    [query findObjectsInBackgroundWithBlock:^(NSArray *allContacts, NSError *error) {
-        if (!error) {
-            //Loop through all contacts on parse
-            for (PFObject *object in allContacts) {
-                //Make objects into custom Contact Objects
-                ContactObject *contact = [[ContactObject alloc] init];
-                contact.first = object[@"FirstName"];
-                contact.last = object[@"LastName"];
-                contact.phone = object[@"Phone"];
-                contact.objectId = object;
-                contact.type = object[@"Type"];
-                
-                //Add objects to array
-                [contacts addObject:contact];
-            }
-            [myTable reloadData];
-        } else {
-            NSLog(@"Error");
-        }
-    }];
+    //Grab data
+    [self getData];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -83,6 +80,62 @@
 
 #pragma mark -
 #pragma mark Table Management
+
+//Get Data from parse
+-(void)getData{
+    //clear array & get new data
+    [contacts removeAllObjects];
+    
+    if([self Internet]){
+        //Get user data from parse
+        PFQuery *query = [PFQuery queryWithClassName:@"Contacts"];
+        [query whereKey:@"User" equalTo:currentUser];
+        [query findObjectsInBackgroundWithBlock:^(NSArray *allContacts, NSError *error) {
+            if (!error) {
+                //Loop through all contacts on parse
+                for (PFObject *object in allContacts) {
+                    //Make objects into custom Contact Objects
+                    ContactObject *contact = [[ContactObject alloc] init];
+                    contact.first = object[@"FirstName"];
+                    contact.last = object[@"LastName"];
+                    contact.phone = object[@"Phone"];
+                    contact.objectId = object;
+                    contact.type = object[@"Type"];
+                    
+                    //Add objects to array
+                    [contacts addObject:contact];
+                }
+                [myTable reloadData];
+            } else {
+                NSLog(@"Error");
+            }
+        }];
+    } else {
+        PFQuery *query = [PFQuery queryWithClassName:@"Contacts"];
+        [query fromLocalDatastore];
+        [query whereKey:@"User" equalTo:currentUser];
+        [query findObjectsInBackgroundWithBlock:^(NSArray *allContacts, NSError *error) {
+            if (!error) {
+                //Loop through all contacts on parse
+                for (PFObject *object in allContacts) {
+                    //Make objects into custom Contact Objects
+                    ContactObject *contact = [[ContactObject alloc] init];
+                    contact.first = object[@"FirstName"];
+                    contact.last = object[@"LastName"];
+                    contact.phone = object[@"Phone"];
+                    contact.objectId = object;
+                    contact.type = object[@"Type"];
+                    
+                    //Add objects to array
+                    [contacts addObject:contact];
+                }
+                [myTable reloadData];
+            } else {
+                NSLog(@"Error");
+            }
+        }];
+    }
+}
 
 //TableView row count
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -115,8 +168,8 @@
     [self toastMessage];
     //Log user out of parse
     [PFUser logOut];
-    PFUser *currentUser = [PFUser currentUser];
-    NSLog(@"currentUser == %@",currentUser);
+    PFUser *noUser = [PFUser currentUser];
+    NSLog(@"currentUser == %@",noUser);
     
     //Go back to login screen
     UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
@@ -139,6 +192,10 @@
                        animated:YES
                      completion:nil];
 }
+//Refresh button
+-(IBAction)refresh{
+    [self getData];
+};
 //Segue
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     DetailViewController *detailView = segue.destinationViewController;

@@ -17,14 +17,37 @@
 @synthesize typeArray;
 
 #pragma mark -
+#pragma mark System
+
+//checks for internet
+-(BOOL)Internet{
+    //Make address string a url
+    NSString *address = @"https://parse.com/";
+    NSURL *url = [NSURL URLWithString:address];
+    //create request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setHTTPMethod:@"HEAD"];
+    //send request
+    NSHTTPURLResponse *results;
+    [NSURLConnection sendSynchronousRequest:request returningResponse:&results error:NULL];
+    //get results
+    if([results statusCode] == 200){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+#pragma mark -
 #pragma mark Views
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
+
     //init the array
     self.typeArray = @[@"Home Phone", @"Cell Phone", @"Work"];
+    type = @"Home Phone";
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -52,46 +75,60 @@
 
 //Save Button
 -(IBAction)OnSave{
-    //check to see if any fields are empty
-    if((first.text.length == 0)||(last.text.length == 0)||(number.text.length == 0)){
+    //if NO Internet alert user
+    if(![self Internet]){
         //send alert if fields are blank
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert"
-                                                       message:@"Please fill in all fields"
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No Internet Connection"
+                                                       message:@"Must Have Internet to Save Contact"
                                                       delegate:nil
                                              cancelButtonTitle:@"Okay"
                                              otherButtonTitles:nil, nil];
         [alert show];
+
     } else {
-        //convert info to parse object
-        PFObject *contact = [PFObject objectWithClassName:@"Contacts"];
-        contact[@"FirstName"] = first.text;
-        contact[@"LastName"] = last.text;
-        contact[@"Type"] = type;
-        
-        //convert number string into NSNumber
-        int num = [number.text intValue];
-        NSNumber *phone = [NSNumber numberWithInt:num];
-        contact[@"Phone"] = phone;
-        
-        //save user
-        contact[@"User"] = [PFUser currentUser];
-        [contact saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
-            if (succeeded) {
-                //send alert
-                [self toastMessage];
-                //Load Home Screen
-                UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
-                                                                     bundle:nil];
-                HomeViewController *home =
-                [storyboard instantiateViewControllerWithIdentifier:@"home"];
-                
-                [self presentViewController:home
-                                   animated:YES
-                                 completion:nil];
-            } else {
-                NSLog(@"object didnt saved");
-            }
-        }];
+        //check to see if any fields are empty
+        if((first.text.length == 0)||(last.text.length == 0)||(number.text.length == 0)){
+            //send alert if fields are blank
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Alert"
+                                                           message:@"Please fill in all fields"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"Okay"
+                                                 otherButtonTitles:nil, nil];
+            [alert show];
+        } else {
+            //convert info to parse object
+            PFObject *contact = [PFObject objectWithClassName:@"Contacts"];
+            contact[@"FirstName"] = first.text;
+            contact[@"LastName"] = last.text;
+            contact[@"Type"] = type;
+            
+            //convert number string into NSNumber
+            int num = [number.text intValue];
+            NSNumber *phone = [NSNumber numberWithInt:num];
+            contact[@"Phone"] = phone;
+            
+            //save user
+            contact[@"User"] = [PFUser currentUser];
+            [contact pinInBackground];
+            [contact saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error) {
+                if (succeeded) {
+                    //send alert
+                    [self toastMessage];
+                    //Load Home Screen
+                    UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                                         bundle:nil];
+                    HomeViewController *home =
+                    [storyboard instantiateViewControllerWithIdentifier:@"home"];
+                    
+                    [self presentViewController:home
+                                       animated:YES
+                                     completion:nil];
+                } else {
+                    NSLog(@"object didnt saved");
+                }
+            }];
+        }
+
     }
 }
 //Cancel Button

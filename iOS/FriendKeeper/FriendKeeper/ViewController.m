@@ -16,19 +16,42 @@
 @implementation ViewController
 
 #pragma mark -
+#pragma mark System
+//checks for internet
+-(BOOL)Internet{
+    //Make address string a url
+    NSString *address = @"https://parse.com/";
+    NSURL *url = [NSURL URLWithString:address];
+    //create request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setHTTPMethod:@"HEAD"];
+    //send request
+    NSHTTPURLResponse *results;
+    [NSURLConnection sendSynchronousRequest:request returningResponse:&results error:NULL];
+    //get results
+    if([results statusCode] == 200){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+#pragma mark -
 #pragma mark Managing Views
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    //Only send alert user if no internet
+    if(![self Internet]){
+        [self toastMessage:@"No Internet Connection"];
+    }
 }
-
 //present home screen if user is still logged in
 -(void)viewDidAppear:(BOOL)animated{
     //Get current user info
     PFUser *currentUser = [PFUser currentUser];
     if (currentUser) {
-        //send toast of logged in already
-        [self toastMessage];
-        
         //present home screen
         UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
                                                              bundle:nil];
@@ -40,7 +63,7 @@
                          completion:nil];
 
     } else {
-        NSLog(@"no currentUser");
+        
     }
 
 }
@@ -50,10 +73,9 @@
 }
 
 //toast alert message of log in
--(void)toastMessage {
-    NSString *message = @"User Logged In";
+-(void)toastMessage:(NSString *)msg {
     UIAlertView *toast = [[UIAlertView alloc] initWithTitle:nil
-                                                    message:message
+                                                    message:msg
                                                    delegate:nil
                                           cancelButtonTitle:nil
                                           otherButtonTitles:nil, nil];
@@ -70,31 +92,42 @@
 
 //Log in Button
 -(IBAction)onLogIn {
-    // Log in to parse && present Home screen 
-    [PFUser logInWithUsernameInBackground:userName.text password:password.text
-                                    block:^(PFUser *user, NSError *error) {
-                                        if (user) {
-                                            //send toast of successful login
-                                            [self toastMessage];
-                                            //preset home screen
-                                            UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
-                                                                                                 bundle:nil];
-                                            HomeViewController *home =
-                                            [storyboard instantiateViewControllerWithIdentifier:@"home"];
-                                            
-                                            [self presentViewController:home
-                                                               animated:YES 
-                                                             completion:nil];
-                                        } else {
-                                            NSLog(@"not logged in");
-                                            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error"
-                                                                                           message:[error userInfo][@"error"]
-                                                                                          delegate:nil
-                                                                                 cancelButtonTitle:@"Okay"
-                                                                                 otherButtonTitles:nil, nil];
-                                            [alert show];
-                                        }
-                                    }];
+    if ([self Internet]) {
+        // Log in to parse && present Home screen
+        [PFUser logInWithUsernameInBackground:userName.text password:password.text
+                                        block:^(PFUser *user, NSError *error) {
+                                            if (user) {
+                                                //send toast of successful login
+                                                [self toastMessage:@"User Logged In"];
+                                                //preset home screen
+                                                UIStoryboard* storyboard = [UIStoryboard storyboardWithName:@"Main"
+                                                                                                     bundle:nil];
+                                                HomeViewController *home =
+                                                [storyboard instantiateViewControllerWithIdentifier:@"home"];
+                                                
+                                                [self presentViewController:home
+                                                                   animated:YES
+                                                                 completion:nil];
+                                            } else {
+                                                NSLog(@"not logged in");
+                                                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"Error"
+                                                                                               message:[error userInfo][@"error"]
+                                                                                              delegate:nil
+                                                                                     cancelButtonTitle:@"Okay"
+                                                                                     otherButtonTitles:nil, nil];
+                                                [alert show];
+                                            }
+                                        }];
+
+    } else {
+        //send alert if fields are blank
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No Internet Connection"
+                                                       message:@"Must Have Internet to Login"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"Okay"
+                                             otherButtonTitles:nil, nil];
+        [alert show];
+    }
 }
 
 @end

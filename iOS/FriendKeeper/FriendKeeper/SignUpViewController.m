@@ -16,6 +16,27 @@
 @implementation SignUpViewController
 
 #pragma mark -
+#pragma mark System
+//checks for internet
+-(BOOL)Internet{
+    //Make address string a url
+    NSString *address = @"https://parse.com/";
+    NSURL *url = [NSURL URLWithString:address];
+    //create request
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+    [request setHTTPMethod:@"HEAD"];
+    //send request
+    NSHTTPURLResponse *results;
+    [NSURLConnection sendSynchronousRequest:request returningResponse:&results error:NULL];
+    //get results
+    if([results statusCode] == 200){
+        return true;
+    } else {
+        return false;
+    }
+}
+
+#pragma mark -
 #pragma mark Views
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -93,7 +114,17 @@
 #pragma mark Navigation
 
 -(IBAction)onSubmit{
-    [self signUp];
+    if([self Internet]){
+        [self signUp];
+    } else {
+        //send alert
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"No Internet Connection"
+                                                       message:@"Must Have Internet to Create Account"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"Okay"
+                                             otherButtonTitles:nil, nil];
+        [alert show];
+    }
 }
 -(IBAction)onCancel{
     [self dismissViewControllerAnimated:true completion:nil];

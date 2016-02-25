@@ -14,8 +14,10 @@
     IBOutlet UILabel *welcome;
     IBOutlet UITableView *myTable;
     NSMutableArray *contacts;
+    PFUser *currentUser;
 }
 
 -(IBAction)logOut;
 -(IBAction)add;
+-(IBAction)refresh;
 @end
