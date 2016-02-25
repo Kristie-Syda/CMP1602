@@ -145,7 +145,8 @@ public class AddFragment extends Fragment {
                             } else {
                                 contact.put("Type", mType);
                                 try {
-                                    contact.put("Phone", Integer.parseInt(phone.getText().toString()));
+                                    int myNum = Integer.valueOf(phone.getText().toString()).intValue();
+                                    contact.put("Phone", myNum);
                                     contact.saveInBackground(new SaveCallback() {
                                         @Override
                                         public void done(ParseException e) {
@@ -177,7 +178,7 @@ public class AddFragment extends Fragment {
                             //Phone number is not correct
                             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
                             alert.setTitle("Phone Number is incorrect");
-                            alert.setMessage("Please enter a 10 digit phone number (Example:7048675309)");
+                            alert.setMessage("Please enter a 7 digit phone number (Example:8675309)");
                             alert.setPositiveButton("OKAY", null);
                             alert.show();
                         }
@@ -191,7 +192,7 @@ public class AddFragment extends Fragment {
 
     //VALIDATION METHODS
     public boolean isPhoneNumber(String number){
-        if((number.length() == 10)&&(number.matches("[0-9]+"))) {
+        if((number.length() == 7)&&(number.matches("[0-9]+"))) {
             System.out.println("number is phone");
             return true;
         } else {
