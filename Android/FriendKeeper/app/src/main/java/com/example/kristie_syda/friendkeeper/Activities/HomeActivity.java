@@ -64,6 +64,11 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.home
             Intent aIntent = new Intent(this,AddActivity.class);
             this.startActivityForResult(aIntent, ADD_RESULTS);
             return true;
+        } else if(id == R.id.action_refresh){
+            //get fragment and refresh list
+            HomeFragment frag = (HomeFragment) getFragmentManager().findFragmentByTag(HomeFragment.TAG);
+            frag.refreshList();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

@@ -14,13 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.ContactObject;
+import com.example.kristie_syda.friendkeeper.NetworkConnection;
 import com.example.kristie_syda.friendkeeper.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
 import java.util.List;
 
 
@@ -32,7 +32,6 @@ public class HomeFragment extends Fragment {
     private ParseUser mUser;
     private ArrayAdapter mAdapter;
     private homeListener mListener;
-
 
     //FACTORY METHODS
     public static HomeFragment newInstance(){
@@ -77,7 +76,7 @@ public class HomeFragment extends Fragment {
 
         //ListView
         ListView list = (ListView) getView().findViewById(R.id.listView);
-        list.setEmptyView(getView().findViewById(R.id.empty));
+        //list.setEmptyView(getView().findViewById(R.id.empty));
         mAdapter = new ArrayAdapter(getActivity(),android.R.layout.simple_list_item_1);
         list.setAdapter(mAdapter);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -93,30 +92,55 @@ public class HomeFragment extends Fragment {
     //REFRESH LIST
     public void refreshList(){
         mAdapter.clear();
-        //Get user data from parse
-        ParseQuery<ParseObject> contactQuery = ParseQuery.getQuery("Contacts");
-        contactQuery.whereEqualTo("User", mUser);
-        contactQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (e == null) {
-                    //loop through objects
-                    for (ParseObject contact : objects) {
-                        String last = contact.getString("LastName").toString();
-                        String first = contact.get("FirstName").toString();
-                        int phone = contact.getInt("Phone");
-                        String type = contact.get("Type").toString();
-                        String objId = contact.getObjectId();
-                        ContactObject obj = new ContactObject(first, last, phone, objId,type);
-                        mAdapter.add(obj);
+        if(NetworkConnection.isConnected(getActivity().getApplicationContext())) {
+            //Get user data from parse
+            ParseQuery<ParseObject> contactQuery = ParseQuery.getQuery("Contacts");
+            contactQuery.whereEqualTo("User", mUser);
+            contactQuery.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> objects, ParseException e) {
+                    if (e == null) {
+                        //loop through objects
+                        for (ParseObject contact : objects) {
+                            String last = contact.getString("LastName").toString();
+                            String first = contact.get("FirstName").toString();
+                            int phone = contact.getInt("Phone");
+                            String type = contact.get("Type").toString();
+                            String objId = contact.getObjectId();
+                            ContactObject obj = new ContactObject(first, last, phone, objId, type);
+                            mAdapter.add(obj);
+                        }
+                    } else {
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
+                        toast.show();
                     }
-                } else {
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
-                    toast.show();
                 }
-            }
-        });
+            });
+        } else {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Contacts");
+            query.fromLocalDatastore();
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> objects, ParseException e) {
+                    if(e == null){
+                        //loop through objects
+                        for (ParseObject contact : objects) {
+                            String last = contact.getString("LastName").toString();
+                            String first = contact.get("FirstName").toString();
+                            int phone = contact.getInt("Phone");
+                            String type = contact.get("Type").toString();
+                            String objId = contact.getObjectId();
+                            ContactObject obj = new ContactObject(first, last, phone, objId, type);
+                            mAdapter.add(obj);
+                        }
+                    } else {
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Error: " + e, duration);
+                        toast.show();
+                    }
+                }
+            });
+        }
     }
-
 }

@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.kristie_syda.friendkeeper.NetworkConnection;
 import com.example.kristie_syda.friendkeeper.R;
+import com.parse.ParseACL;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -123,7 +124,8 @@ public class AddFragment extends Fragment {
                     } else {
                         //Get Parse User
                         ParseUser currentUser = ParseUser.getCurrentUser();
-                        ParseObject contact = new ParseObject("Contacts");
+                        currentUser.setACL(new ParseACL(currentUser));
+                        final ParseObject contact = new ParseObject("Contacts");
                         contact.put("User", currentUser);
                         contact.put("FirstName", first.getText().toString());
                         contact.put("LastName", last.getText().toString());
@@ -144,6 +146,7 @@ public class AddFragment extends Fragment {
                                     public void done(ParseException e) {
                                         if (e == null) {
                                             //contact saved
+                                            contact.pinInBackground();
                                             int duration = Toast.LENGTH_SHORT;
                                             Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was saved!", duration);
                                             toast.show();

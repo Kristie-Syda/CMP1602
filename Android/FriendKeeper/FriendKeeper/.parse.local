@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "FriendKeeper": {
+      "applicationId": "XSvwBB0y1Tof3v7zTu0FvyMwTe8HtBg2lU8Ji7o2"
+    },
+    "_default": {
+      "link": "FriendKeeper"
+    }
+  }
+}

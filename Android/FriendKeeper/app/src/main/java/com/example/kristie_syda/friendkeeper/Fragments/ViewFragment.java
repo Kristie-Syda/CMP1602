@@ -177,6 +177,7 @@ public class ViewFragment extends Fragment {
                         @Override
                         public void done(ParseObject object, com.parse.ParseException e) {
                             if (e == null) {
+                                object.unpinInBackground();
                                 object.deleteInBackground();
                                 int duration = Toast.LENGTH_SHORT;
                                 Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Contact was deleted!", duration);
